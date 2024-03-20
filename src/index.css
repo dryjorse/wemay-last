@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply m-0 p-0 box-border;
+  }
+  body {
+    @apply text-16 font-montserrat;
+  }
+  input {
+    @apply bg-transparent outline-none;
+  }
+  button {
+    @apply text-start;
+  }
+  h2,
+  .title {
+    @apply text-[32px] leading-[41px] font-bold font-montserrat text-[rgba(51,51,51,1)];
+  }
+  .title-3 {
+    @apply text-18 text-[rgba(79,79,79,1)] leading-[23px] font-bold font-montserrat;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded-[8px];
+  }
+  ::-webkit-scrollbar {
+    @apply w-[10px];
+  }
+  .scroll-small::-webkit-scrollbar {
+    @apply w-[5px];
+  }
+  input[type="range"] {
+    @apply appearance-none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    @apply rounded-circle w-[12px] h-[12px] bg-green appearance-none;
+  }
+
+  .App {
+    @apply overflow-hidden
+  }
+  .trans-def {
+    transition: 0.1s ease-in all;
+  }
+  .scroll-hidden::-webkit-scrollbar {
+    @apply w-0;
+  }
+
+  @keyframes open-modal-wrapper {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes open-burger {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
+  @keyframes open-filter {
+    0% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
+}
+@layer components {
+  .container {
+    @apply px-[16px] max-w-[1177px] mx-auto;
+  }
+  .container-two {
+    @apply px-[16px] max-w-[1302px] mx-auto;
+  }
+  .box-secondary {
+    @apply rounded-[100px] border px-[24px] py-[16px] font-medium;
+  }
+  .box-input {
+    @apply rounded-[24px] border border-[rgba(221,221,223,1)] px-[16px] py-[12px] w-full text-[rgba(51,51,51,1)] font-mulish trans-def focus:border-green;
+  }
+  .box-btn {
+    @apply rounded-[24px] border-2 border-green py-10 px-[47px] text-green font-bold leading-[20px] font-montserrat cursor-pointer;
+  }
+  .btn {
+    @apply rounded-[30px] bg-green py-[16px] px-[49px] text-white font-bold font-montserrat text-center trans-def hover:brightness-75 active:brightness-105;
+  }
+}
