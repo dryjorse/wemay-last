@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import { promotionsData } from "../../data/data";
 // @ts-ignore
 import useMatchMedia from "use-match-media";
 import geoIcon from "../../assets/images/icons/geo.svg";
@@ -11,6 +10,8 @@ import Filter from "../filter/Filter";
 import Pagination from "../ui/pagination/Pagination";
 import Map from "../map/Map";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import promotionService from "../../services/promotionService";
 
 interface IPromotions {
   isPagination?: boolean;
@@ -18,6 +19,7 @@ interface IPromotions {
 }
 
 const Promotions: FC<IPromotions> = ({ isPagination = false, style = "" }) => {
+  const {data} = useQuery({queryKey: ['promotions'], queryFn: () => promotionService.getAll(), select: ({data}) => data})
   const [page, setPage] = useState(1);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -46,8 +48,8 @@ const Promotions: FC<IPromotions> = ({ isPagination = false, style = "" }) => {
             </button>
           </div>
         </div>
-        <div className="mt-40 mb-80 grid grid-cols-[repeat(2,minmax(0,auto))] justify-between gap-x-[20px] gap-y-[80px] lt:grid-cols-[repeat(1,minmax(0,auto))] lt:justify-center stb:gap-y-[40px]">
-          {promotionsData.map((promotion, key) => (
+        <div className="mt-40 mb-80 grid grid-cols-2 justify-between gap-x-[20px] gap-y-[80px] lt:grid-cols-1 lt:justify-center stb:gap-y-[40px]">
+          {data?.results?.map((promotion, key) => (
             <PromotionCard key={key} {...promotion} />
           ))}
         </div>

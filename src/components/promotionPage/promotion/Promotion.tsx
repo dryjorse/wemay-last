@@ -16,16 +16,15 @@ import crossIcon from "../../../assets/images/icons/cross.svg";
 import "swiper/css";
 
 const Promotion: FC<IPromotion> = ({
-  name,
+  title,
   image,
-  initPrice,
-  price,
+  old_price,
+  new_price,
   likes,
   contacts,
   workTime,
-  discountPercentage,
-  images,
-  end,
+  discount,
+  end_date,
   description,
   address,
 }) => {
@@ -34,7 +33,7 @@ const Promotion: FC<IPromotion> = ({
 
   return (
     <section className="container-two pt-[44px] pb-80">
-      <h1 className="title">{name}</h1>
+      <h1 className="title">{title}</h1>
       <div className="mt-[32px] flex justify-between gap-[32px] items-start blt:flex-col blt:items-stretch">
         <div className="flex-[0_0_740px] blt:flex-auto">
           <div
@@ -42,7 +41,7 @@ const Promotion: FC<IPromotion> = ({
             className="rounded-[24px] w-full h-[454px] flex items-end justify-between bg-cover bg-center bg-no-repeat text-white overflow-hidden trans-def stb:h-[200px]"
           >
             <b className="rounded-[0_16px_0_16px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] leading-[24px]">
-              -{discountPercentage}%
+              -{discount}%
             </b>
             <div className="rounded-[24px,0px,24px,0px] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center">
               <img src={likeIcon} alt="like" />
@@ -50,7 +49,7 @@ const Promotion: FC<IPromotion> = ({
             </div>
           </div>
           <div className="mt-[24px] flex justify-between items-center tb:flex-col tb:items-start tb:gap-[24px]">
-            <Swiper
+            {/* <Swiper
               spaceBetween={21}
               slidesPerView="auto"
               className="m-0 max-w-[595px]"
@@ -72,24 +71,25 @@ const Promotion: FC<IPromotion> = ({
                   </button>
                 </SwiperSlide>
               ))}
-            </Swiper>
+            </Swiper> */}
+            <div></div>
             <div className="font-mulish">
               <div className="flex gap-[6px] items-center text-14 leading-[19px] text-[#4F4F4F]">
                 <img src={timeIcon} alt="clock" />
                 <span>До конца акции</span>
               </div>
-              <span className="text-grey">{end}</span>
+              <span className="text-grey">{end_date}</span>
             </div>
           </div>
         </div>
         <div className="rounded-[24px] p-[32px] bg-gray flex-[0_1_508px] font-mulish">
           <span className="relative text-[24px]">
-            от {initPrice} сом{" "}
+            от {new_price} сом{" "}
             <div className="absolute top-[calc(50%+1px)] left-[-3px] w-full h-[1px] bg-black"></div>
           </span>
-          <b className="ml-[15px] text-[24px]">от {price} сом</b>
+          <b className="ml-[15px] text-[24px]">от {old_price} сом</b>
           <span className="block mt-[8px] mb-[24px] text-18 leading-[23px] text-[#4F4F4F]">
-            Экономия {price} сом
+            Экономия {old_price} сом
           </span>
           <div className="flex justify-between items-center gap-[8px] blt:justify-start">
             <button
@@ -105,15 +105,16 @@ const Promotion: FC<IPromotion> = ({
           </div>
           <span className="my-[24px] block text-18">Контактная информация</span>
           <span className="text-grey">Телефон</span>
-          {contacts.map((tel) => (
-            <a
-              key={tel}
-              href={`tel:${tel}`}
+          <a
+              key={contacts}
+              href={`tel:${contacts}`}
               className="mt-[8px] block text-18 font-bold leading-[23px] font-montserrat"
             >
-              {tel}
+              {contacts}
             </a>
-          ))}
+          {/* {contacts.map((tel) => (
+            
+          ))} */}
           <div className="my-[21px] max-w-[255px] w-full h-[1px] bg-[#D7D7D7]"></div>
           <span className="text-grey">Часы работы</span>
           <span className="mt-[8px] block text-18 text-grey leading-[24px]">

@@ -1,12 +1,19 @@
 import { FC } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { companiesData } from "../../../data/data";
 import arrowLeftIcon from "../../../assets/images/icons/arrow-left.svg";
 import { Navigation } from "swiper/modules";
 import CompanyCard from "../../companyCard/CompanyCard";
 import "swiper/css";
+import { useQuery } from "@tanstack/react-query";
+import companiesService from "../../../services/companiesService";
 
 const Companies: FC = () => {
+  const { data } = useQuery({
+    queryKey: ["companies"],
+    queryFn: () => companiesService.getAll(),
+    select: ({ data }) => data
+  });
+
   return (
     <section className="pt-60">
       <h2 className="container">Компании</h2>
@@ -30,7 +37,7 @@ const Companies: FC = () => {
             nextEl: ".company .slider-next",
           }}
         >
-          {[...companiesData, ...companiesData].map((company, key) => (
+          {data?.results?.map((company, key) => (
             <SwiperSlide key={key} className="w-fit">
               <CompanyCard {...company} />
             </SwiperSlide>

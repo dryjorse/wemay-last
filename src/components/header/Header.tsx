@@ -1,12 +1,7 @@
 import { FC, ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
-import { categoriesData, promotionsData, textLimit } from "../../data/data";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import { RootState, useAppDispatch } from "../../store/store";
-import { setCategories } from "../../store/slices/filterSlice";
+import {  promotionsData, textLimit } from "../../data/data";
 import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
 import { IUser } from "../../types/types";
 import Burger from "../burger/Burger";
 import clsx from "clsx";
@@ -20,16 +15,15 @@ import freeIcon from "../../assets/images/icons/free-ctg.svg";
 import burgerIcon from "../../assets/images/icons/burger.svg";
 import logoIcon from "../../assets/images/icons/logo.svg";
 import searchIcon from "../../assets/images/icons/search.svg";
-import avaIcon from "../../assets/images/term/ava.svg";
 import personIcon from "../../assets/images/icons/person.svg";
-import smallArrowDownIcon from "../../assets/images/icons/small-arrow-down.svg";
-import arrowLeftIcon from "../../assets/images/icons/arrow-left.svg";
+
 import profileMenuIcon from "../../assets/images/icons/profile-menu.svg";
 import heartIcon from "../../assets/images/icons/heart-black.svg";
 import starIcon from "../../assets/images/icons/star-black.svg";
 import settingsIcon from "../../assets/images/icons/settings.svg";
 import exitIcon from "../../assets/images/icons/exit.svg";
 import "swiper/css";
+import Categories from "../categories/Categories";
 
 interface IProfileDropdownProps {
   head: ReactNode;
@@ -91,8 +85,6 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
 };
 
 const Header: FC = () => {
-  const dispatch = useAppDispatch();
-  const categories = useSelector((state: RootState) => state.filter.categories);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isSeaarchFocus, setIsSearchFocus] = useState(false);
@@ -218,74 +210,8 @@ const Header: FC = () => {
           </div>
         </div>
         <div className="h-[1px] bg-white"></div>
-        <nav className="py-20 container max-w-[1400px] flex justify-between items-center categories">
-          <button className="px-10 h-full slider-prev group flex-shrink-0">
-            <img
-              src={arrowLeftIcon}
-              alt="arrow-left"
-              className="trans-def group-disabled:opacity-50"
-            />
-          </button>
-          <Swiper
-            grabCursor
-            slidesPerView={1}
-            spaceBetween={24}
-            modules={[Navigation]}
-            navigation={{
-              prevEl: ".categories .slider-prev",
-              nextEl: ".categories .slider-next",
-            }}
-            breakpoints={{ 425: { slidesPerView: "auto" } }}
-          >
-            {categoriesData.map((category) => (
-              <SwiperSlide key={category.name} className="w-fit">
-                <Link
-                  to="/promotions"
-                  key={category.name}
-                  onClick={() =>
-                    dispatch(
-                      setCategories(
-                        categories.includes(category.name)
-                          ? []
-                          : [category.name]
-                      )
-                    )
-                  }
-                  className={clsx(
-                    "group flex flex-col items-center trans-def hover:text-green",
-                    { "text-green": categories.includes(category.name) }
-                  )}
-                >
-                  <div
-                    style={{ maskImage: `url(${category.icon})` }}
-                    className={clsx(
-                      "w-[16px] h-[16px] bg-[#4F4F4F] opacity-50 trans-def group-hover:bg-green",
-                      { "bg-green": categories.includes(category.name) }
-                    )}
-                  ></div>
-                  {/* <span>{category.name}</span> */}
-                  <div className="flex gap-[9px] items-center">
-                    <span className="whitespace-nowrap">{category.name}</span>
-                    <div
-                      style={{ maskImage: `url(${smallArrowDownIcon})` }}
-                      className={clsx(
-                        "w-[8px] h-[4px] bg-[#333333] group-hover:bg-green",
-                        { "bg-green": categories.includes(category.name) }
-                      )}
-                    ></div>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          <button className="px-10 h-full slider-next group flex-shrink-0">
-            <img
-              src={arrowLeftIcon}
-              alt="arrow-right"
-              className="rotate-180 trans-def group-disabled:opacity-50"
-            />
-          </button>
-        </nav>
+        <Categories />
+
         <Burger
           isOpen={isBurgerOpen}
           close={() => setIsBurgerOpen(false)}

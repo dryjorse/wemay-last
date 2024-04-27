@@ -9,10 +9,10 @@ interface IPromotionCardProps extends IPromotionCard {
 }
 
 const PromotionCard: FC<IPromotionCardProps> = ({
-  name,
-  initPrice,
-  price,
-  discountPercentage,
+  title,
+  old_price,
+  new_price,
+  discount,
   likes,
   image,
   link,
@@ -34,7 +34,7 @@ const PromotionCard: FC<IPromotionCardProps> = ({
           </button>
           <div className="flex justify-between">
             <span className="rounded-[0_24px_0_24px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] font-bold">
-              -{discountPercentage}%
+              -{discount}%
             </span>
             <div className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center">
               <img src={likeIcon} alt="like" />
@@ -43,13 +43,13 @@ const PromotionCard: FC<IPromotionCardProps> = ({
           </div>
         </div>
       </div>
-      <h3 className="mt-[24px] mb-[16px] font-semibold stb:font-normal">{name}</h3>
+      <h3 className="mt-[24px] mb-[16px] font-semibold stb:font-normal">{title}</h3>
       <div className="flex gap-[8px] items-center text-[20px] leading-[24px] stb:text-18">
         <span className="relative font-medium text-[#828282]">
-          от {initPrice} сом{" "}
+          от {old_price} сом{" "}
           <div className="absolute top-[calc(50%)] left-0 right-0 h-[1px] bg-[#828282]"></div>
         </span>
-        <b>от {price} сом</b>
+        <b>от {new_price} сом</b>
       </div>
     </Link>
   );

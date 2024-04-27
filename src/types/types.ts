@@ -1,22 +1,35 @@
+export interface IResults<T> {
+  count: number;
+  results: T[];
+}
+
 export interface ICompany {
   link: string;
-  logo: string;
-  promotionsCount: number;
-  maxDiscounts: number;
+  image: string;
+  promotions_count: number;
+  discounts: number;
+}
+
+export interface ICategory {
+  link: string;
+  title: string;
+  image: string;
+  icon: string;
+  parent_category: string;
+  count_category: string;
 }
 
 export interface IPromotion {
-  name: string;
-  initPrice: number;
-  price: number;
-  discountPercentage: number;
+  title: string;
+  old_price: number;
+  new_price: number;
+  discount: number;
   likes: number;
   image: string;
   link: string;
-  contacts: string[];
+  contacts: string;
   workTime: string;
-  images: string[];
-  end: string;
+  end_date: string;
   description: string;
   address: {
     name: string;
@@ -26,10 +39,10 @@ export interface IPromotion {
 
 export type IPromotionCard = Pick<
   IPromotion,
-  | "name"
-  | "initPrice"
-  | "price"
-  | "discountPercentage"
+  | "title"
+  | "old_price"
+  | "new_price"
+  | "discount"
   | "likes"
   | "image"
   | "link"
@@ -82,11 +95,12 @@ export interface IValidationError {
 
 export interface IRegisterResponse {
   message: string;
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
-  refresh_token: string;
+  tokens: {access: string, refresh: string};
+  // access_token: string;
+  // expires_in: number;
+  // token_type: string;
+  // scope: string;
+  // refresh_token: string;
 }
 
 export interface IScheduleWeekDay {
