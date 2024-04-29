@@ -1,14 +1,20 @@
 import { $api } from "../common/api";
 import { IPromotion, IResults } from "../types/types";
 
-class promotionsService {
-    getAll(){
-        return $api<IResults<IPromotion>>('promotions/all/')
-    }
-    getById(id: number){
-        return $api<IPromotion>(`promotions/${id}/`)
-    }
-
+interface getAllParams {
+  page?: number;
+  page_size?: number;
 }
 
-export default new promotionsService();
+class PromotionsService {
+  getAll(params?: getAllParams) {
+    return $api<IResults<IPromotion>>("promotions/all/", {
+      params,
+    });
+  }
+  getById(id: number) {
+    return $api<IPromotion>(`promotions/${id}/`);
+  }
+}
+
+export default new PromotionsService();

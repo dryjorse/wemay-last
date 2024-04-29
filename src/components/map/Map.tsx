@@ -1,29 +1,81 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { Transition } from "react-transition-group";
-import { IPromotionCard } from "../../types/types";
-import { customMarkerIcon, promotionsData } from "../../data/data";
+import { IPromotion } from "../../types/types";
+import { customMarkerIcon } from "../../data/data";
 import { Link } from "react-router-dom";
 import PromotionCard from "../promotionCard/PromotionCard";
 import clsx from "clsx";
 import crossIcon from "../../assets/images/icons/cross.svg";
 import "leaflet/dist/leaflet.css";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import promotionService from "../../services/promotionService";
+import mapService from "../../services/mapService";
+import Loading from "../ui/loading/Loading";
 
 interface IMapProps {
   isOpen: boolean;
   close: () => void;
 }
 
-const markers = [
-  { pos: [42.87919742569284, 74.61855424382648], name: "Geeks" },
-  { pos: [42.840390148484225, 74.60121306140927], name: "KGUSTA" },
-];
+export interface IMapMarkerProps extends IPromotion {
+  addresses: { lat: number; lon: number };
+  setClickedPromotion: Dispatch<SetStateAction<IPromotion>>;
+  setIsPromotionOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const MapMarker: FC<IMapMarkerProps> = ({
+  addresses,
+  setClickedPromotion,
+  setIsPromotionOpen,
+  ...promotion
+}) => {
+  if (!promotion) return null;
+
+  return (
+    <Marker
+      // @ts-ignore
+      position={[addresses.lat, addresses.lon]}
+      icon={customMarkerIcon()}
+      eventHandlers={{
+        click: () => {
+          setClickedPromotion(promotion);
+          setIsPromotionOpen(true);
+        },
+      }}
+    ></Marker>
+  );
+};
 
 const Map: FC<IMapProps> = ({ isOpen, close }) => {
   const [isPromotionOpen, setIsPromotionOpen] = useState(false);
-  const [clickedPromotion, setClickedPromotion] = useState<IPromotionCard>(
-    {} as IPromotionCard
+  const [clickedPromotion, setClickedPromotion] = useState<IPromotion>(
+    {} as IPromotion
   );
+
+  const { data: promotions, isLoading } = useQuery({
+    queryKey: ["promotions"],
+    queryFn: () => promotionService.getAll(),
+    select: ({ data }) => data,
+  });
+
+  const promotionsMarkers = useQueries({
+    queries: promotions?.results
+      ? promotions.results.map((promotion) => ({
+          queryKey: ["promotion-addresses", promotion.id],
+          queryFn: () => mapService.getByName(promotion.address),
+          // @ts-ignore
+          select: ({ data }) => ({
+            addresses: { lat: data[0].lat, lon: data[0].lon },
+            ...promotion,
+          }),
+        }))
+      : [],
+    combine: (results) => ({
+      data: results.map((result) => result.data),
+      isLoading: results.some((result) => result.isLoading),
+    }),
+  });
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -49,6 +101,9 @@ const Map: FC<IMapProps> = ({ isOpen, close }) => {
             onClick={(e) => e.stopPropagation()}
             className="relative px-[16px] py-20 w-full max-w-[1044px] h-[80%] flex justify-center items-center"
           >
+            {(promotionsMarkers.isLoading || isLoading) && (
+              <Loading className="mx-[16px] my-20 bg-[rgba(0,0,0,0.3)]" />
+            )}
             <button
               onClick={close}
               className="absolute top-[26px] right-[26px] z-[10]"
@@ -66,22 +121,14 @@ const Map: FC<IMapProps> = ({ isOpen, close }) => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {markers.map((mark, index) => (
-                <Marker
-                  key={mark.name}
-                  // @ts-ignore
-                  position={mark.pos}
-                  icon={customMarkerIcon(
-                    clickedPromotion.name === promotionsData[index].name &&
-                      isPromotionOpen
-                  )}
-                  eventHandlers={{
-                    click: () => {
-                      setClickedPromotion(promotionsData[index]);
-                      setIsPromotionOpen(true);
-                    },
-                  }}
-                ></Marker>
+              {promotionsMarkers.data?.map((promotion, key) => (
+                // @ts-ignore
+                <MapMarker
+                  key={key}
+                  setClickedPromotion={setClickedPromotion}
+                  setIsPromotionOpen={setIsPromotionOpen}
+                  {...promotion}
+                />
               ))}
             </MapContainer>
             <div
@@ -103,7 +150,7 @@ const Map: FC<IMapProps> = ({ isOpen, close }) => {
               </button>
               <PromotionCard {...clickedPromotion} disabled />
               <Link
-                to={clickedPromotion.link}
+                to={`/promotion/${clickedPromotion.id}`}
                 className="btn mt-[32px] py-[8px] text-center font-normal"
               >
                 Узнать больше

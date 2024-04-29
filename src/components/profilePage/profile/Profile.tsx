@@ -18,7 +18,6 @@ const Profile: FC = () => {
     typeof fileReader.result === "string" && setCurrentAva(fileReader.result);
   };
 
-  // console.log(profile)
 
   const onChangeAva = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {

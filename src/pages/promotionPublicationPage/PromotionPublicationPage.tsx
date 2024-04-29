@@ -12,7 +12,6 @@ import Addreses from "../../components/promotionPublicationPage/addreses/Addrese
 
 const PromotionPublicationPage: FC = () => {
   const {
-    watch,
     register,
     formState: { errors },
   } = useForm<IPromotionFields>({ mode: "all" });
@@ -20,8 +19,6 @@ const PromotionPublicationPage: FC = () => {
   const [isIndicateOldPrice, setIsIndicateOldPrice] = useState(false);
   const [contacts, setContacts] = useState([""]);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
-
-  // watch((value) => console.log(value));
 
   return (
     <div className="container pt-80 pb-[120px] max-w-[1064px]">

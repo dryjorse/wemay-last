@@ -6,6 +6,8 @@ import vkIcon from "../../assets/images/icons/vk.svg";
 import facebookIcon from "../../assets/images/icons/facebook.svg";
 
 const Footer: FC = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="pt-60 pb-[24px] bg-gray">
       <div className="container">
@@ -62,7 +64,7 @@ const Footer: FC = () => {
           </div>
         </div>
         <p className="text-center font-medium text-[#4F4F4F]">
-          &copy; wemay 20232
+          &copy; wemay {currentYear}
         </p>
       </div>
     </footer>

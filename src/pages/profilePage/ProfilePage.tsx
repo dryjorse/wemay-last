@@ -21,7 +21,7 @@ const ProfilePage: FC = () => {
             <a href="mailto:Samplesample@gmail.сom">Samplesample@gmail.сom</a>
           </div>
         </section>
-        <div className="mt-20 flex gap-[13px]">
+        <div className="mt-20 flex gap-[13px] lt:flex-col">
           <Navigation />
           <section className="rounded-[16px] pt-40 pb-[75px] px-40 flex-auto bg-white2">
             <Routes>

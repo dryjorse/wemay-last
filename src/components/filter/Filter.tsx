@@ -14,6 +14,8 @@ import {
 import { useSelector } from "react-redux";
 import Checkbox from "../ui/checkbox/Checkbox";
 import Range from "../ui/range/Range";
+import { useQuery } from "@tanstack/react-query";
+import categoryService from "../../services/categoryService";
 
 interface IFilterProps {
   isOpen: boolean;
@@ -30,6 +32,12 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
   const [discountPercentageT, setDiscountPercentageT] =
     useState(discountPercentage);
   const [sortValueT, setSortValueT] = useState(sortValue);
+
+  const { data } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.getAll(),
+    select: ({ data }) => data,
+  });
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -157,26 +165,28 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
                   bodyStyle="duration-[.2s]"
                   maxHeight="fit-content"
                 >
-                  {categoriesData.map((category) => (
+                  {data?.map((category) => (
                     <Accordeon
-                      key={category.name}
+                      key={category.title}
                       style="mt-20"
                       bodyStyle="pl-[26px]"
                       button={
                         <Checkbox
-                          name={category.name}
+                          name={category.title}
                           icon={
                             <div
-                              style={{ Image: `url(${category.icon})` }}
+                              style={{
+                                maskImage: `url(${category.icon})`,
+                              }}
                               className="w-[16px] h-[16px] bg-[#4F4F4F] opacity-50"
                             ></div>
                           }
-                          checked={categoriesT.includes(category.name)}
-                          onChange={() => handleCategory(category.name)}
+                          checked={categoriesT.includes(category.title)}
+                          onChange={() => handleCategory(category.title)}
                         />
                       }
                     >
-                      {category.subCategories.map((subCategory) => (
+                      {/* {category.subCategories.map((subCategory) => (
                         <Checkbox
                           style="mt-20"
                           key={subCategory.name}
@@ -184,7 +194,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
                           checked={categoriesT.includes(category.name)}
                           onChange={() => handleCategory(category.name)}
                         />
-                      ))}
+                      ))} */}
                     </Accordeon>
                   ))}
                 </Accordeon>

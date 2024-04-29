@@ -4,12 +4,14 @@ import { useClickOutside } from "../../../hooks/useClickOutside";
 
 interface IDropdownProps {
   head: ReactNode;
+  className?: string;
   headClassName?: string;
   bodyClassName?: string;
 }
 
 const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
   head,
+  className = "",
   headClassName = "",
   bodyClassName = "",
   children,
@@ -19,7 +21,7 @@ const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
   useClickOutside<HTMLElement>([headRef], () => setIsOpen(false));
 
   return (
-    <div className="relative">
+    <div className={clsx("relative", className)}>
       <button
         ref={headRef}
         className={headClassName}

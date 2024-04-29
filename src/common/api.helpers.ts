@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
 export const saveTokens = (accessToken: string, refreshToken: string) => {
-  localStorage.setItem("token", accessToken);
-  Cookies.set("refresh", refreshToken);
+  localStorage.setItem("wemay-access-token", accessToken);
+  Cookies.set("wemay-refresh-token", refreshToken, { expires: 30 });
 };

@@ -3,36 +3,40 @@ import { NavLink } from "react-router-dom";
 import { profileLinks } from "../../../data/data";
 import clsx from "clsx";
 import Modal from "../../ui/modal/Modal";
+import Dropdown from "../../ui/dropdown/Dropdown";
 
 const Navigation: FC = () => {
   const [isExitOpen, setIsExitOpen] = useState(false);
 
   return (
     <>
-      <nav className="rounded-[16px] p-[32px] min-h-[665px] bg-white2 text-18 leading-[23px] [&>:not(:last-child)]:mb-[8px]">
-        {profileLinks.map(({ link, label, isEnd }) => (
-          <NavLink
-            to={link}
-            key={link}
-            end={isEnd}
-            className={({ isActive }) =>
-              clsx(
-                " border-green py-[8px] px-[12px] block w-[244px] trans-def",
-                {
-                  "border-b": isActive,
-                }
-              )
-            }
+      <nav className="rounded-[16px] p-[32px] min-h-[665px] bg-white2 text-18 leading-[23px] [&>:not(:last-child)]:mb-[8px] lt:min-h-fit">
+        <div className="lt:hidden">
+          {profileLinks.map(({ link, label, isEnd }) => (
+            <NavLink
+              to={link}
+              key={link}
+              end={isEnd}
+              className={({ isActive }) =>
+                clsx(
+                  " border-green py-[8px] px-[12px] block w-[244px] trans-def",
+                  {
+                    "border-b": isActive,
+                  }
+                )
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
+          <button
+            onClick={() => setIsExitOpen(true)}
+            className="py-[8px] px-[12px]"
           >
-            {label}
-          </NavLink>
-        ))}
-        <button
-          onClick={() => setIsExitOpen(true)}
-          className="py-[8px] px-[12px]"
-        >
-          Выход
-        </button>
+            Выход
+          </button>
+        </div>
+        <Dropdown head={<div className="">Изменить профиль</div>} className="hidden lt:block" />
       </nav>
       <Modal
         isOpen={isExitOpen}

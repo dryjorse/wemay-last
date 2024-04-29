@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 // @ts-ignore
 import useMatchMedia from "use-match-media";
 import geoIcon from "../../assets/images/icons/geo.svg";
@@ -12,6 +12,7 @@ import Map from "../map/Map";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
+import Loading from "../ui/loading/Loading";
 
 interface IPromotions {
   isPagination?: boolean;
@@ -19,11 +20,21 @@ interface IPromotions {
 }
 
 const Promotions: FC<IPromotions> = ({ isPagination = false, style = "" }) => {
-  const {data} = useQuery({queryKey: ['promotions'], queryFn: () => promotionService.getAll(), select: ({data}) => data})
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(1);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const isTabler: boolean = useMatchMedia("(max-width: 768px)");
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["promotions"],
+    queryFn: () => promotionService.getAll({ page, page_size: limit }),
+    select: ({ data }) => data,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [page]);
 
   return (
     <>
@@ -48,17 +59,21 @@ const Promotions: FC<IPromotions> = ({ isPagination = false, style = "" }) => {
             </button>
           </div>
         </div>
-        <div className="mt-40 mb-80 grid grid-cols-2 justify-between gap-x-[20px] gap-y-[80px] lt:grid-cols-1 lt:justify-center stb:gap-y-[40px]">
-          {data?.results?.map((promotion, key) => (
-            <PromotionCard key={key} {...promotion} />
-          ))}
+        <div className="relative mt-40 mb-80 grid grid-cols-2 justify-between gap-x-[20px] gap-y-[80px] lt:grid-cols-1 lt:justify-center stb:gap-y-[40px]">
+          {isLoading ? (
+            <Loading />
+          ) : (
+            data?.results?.map((promotion, key) => (
+              <PromotionCard key={key} {...promotion} />
+            ))
+          )}
         </div>
         <button className="btn block mx-auto ">Показать ещё</button>
         {isPagination && (
           <Pagination
             page={page}
-            count={30}
-            limit={6}
+            count={data?.count || 0}
+            limit={limit}
             setPage={setPage}
             pagesViewLimit={isTabler ? 4 : 5}
             reactWhenNumber={1}

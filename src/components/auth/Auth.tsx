@@ -4,15 +4,12 @@ import authService from "../../services/authService";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IAuthFields } from "../../types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAppDispatch } from "../../store/store";
 import passwordEyeIcon from "../../assets/images/icons/password-eye.svg";
 import passwordEyeDisabledIcon from "../../assets/images/icons/password-eye-disabled.svg";
 import checkMark from "../../assets/images/icons/check-mark.svg";
 import googleIcon from "../../assets/images/icons/google.svg";
 import facebookIcon from "../../assets/images/icons/f.svg";
-// import { inputStyle } from "../../data/data";
 import Input from "../ui/input/Input";
-import { register } from "../../store/slices/authSlice";
 import { saveTokens } from "../../common/api.helpers";
 
 interface IAuthProps {
@@ -22,7 +19,6 @@ interface IAuthProps {
 }
 
 const Auth: FC<IAuthProps> = ({ isOpen, close, type = "register" }) => {
-  // const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const {
     register: registerInp,
@@ -39,8 +35,7 @@ const Auth: FC<IAuthProps> = ({ isOpen, close, type = "register" }) => {
   } = useMutation({
     mutationFn: authService[authType],
     onSuccess: ({ data }) => {
-      console.log(data);
-      saveTokens(data.access_token, data.refresh_token);
+      saveTokens(data.tokens.access, data.tokens.refresh);
       queryClient.prefetchQuery({ queryKey: ["profile"] });
     },
     onError: (error: any) => {

@@ -14,7 +14,6 @@ export const register = createAsyncThunk<
 >("auth/register", async (fields, { rejectWithValue }) => {
   try {
     const { data } = await authService.register(fields);
-    console.log(data);
     localStorage.setItem("token", data.access_token);
     return data;
   } catch (error) {

@@ -1,10 +1,9 @@
 import { FC, ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
-import {  promotionsData, textLimit } from "../../data/data";
+import { textLimit } from "../../data/data";
 import { useQuery } from "@tanstack/react-query";
 import { IUser } from "../../types/types";
 import Burger from "../burger/Burger";
-import clsx from "clsx";
 import Auth from "../auth/Auth";
 import Modal from "../ui/modal/Modal";
 import Dropdown from "../ui/dropdown/Dropdown";
@@ -14,16 +13,17 @@ import finishSoonIcon from "../../assets/images/icons/finish-ctg.svg";
 import freeIcon from "../../assets/images/icons/free-ctg.svg";
 import burgerIcon from "../../assets/images/icons/burger.svg";
 import logoIcon from "../../assets/images/icons/logo.svg";
-import searchIcon from "../../assets/images/icons/search.svg";
 import personIcon from "../../assets/images/icons/person.svg";
-
 import profileMenuIcon from "../../assets/images/icons/profile-menu.svg";
 import heartIcon from "../../assets/images/icons/heart-black.svg";
 import starIcon from "../../assets/images/icons/star-black.svg";
 import settingsIcon from "../../assets/images/icons/settings.svg";
 import exitIcon from "../../assets/images/icons/exit.svg";
-import "swiper/css";
 import Categories from "../categories/Categories";
+import Search from "../search/Search";
+import avaIcon from "../../assets/images/icons/ava.svg";
+import "swiper/css";
+import Loading from "../ui/loading/Loading";
 
 interface IProfileDropdownProps {
   head: ReactNode;
@@ -87,9 +87,9 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
 const Header: FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
-  const [isSeaarchFocus, setIsSearchFocus] = useState(false);
+  const [isSearchFocus, setIsSearchFocus] = useState(false);
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: () => profileService.getProfile(),
     select: ({ data }) => data,
@@ -151,49 +151,27 @@ const Header: FC = () => {
                 <img src={logoIcon} alt="logo" />
               </Link>
             </div>
-            <div className="relative flex-[0_1_578px] z-[30]">
-              <div className="box-secondary flex items-center gap-[8px] ">
-                <img src={searchIcon} alt="search" />
-                <input
-                  type="text"
-                  className="w-full leading-[20px] placeholder:text-black "
-                  placeholder="Поиск акций"
-                  onFocus={() => setIsSearchFocus(true)}
-                  onBlur={() => setIsSearchFocus(false)}
-                />
-              </div>
-              <div
-                className={clsx(
-                  "absolute left-[-16px] top-[-20px] rounded-[24px] px-[16px] pt-[95px] pb-[32px] w-[calc(100%+34px)] h-[287px] bg-[rgba(243,243,243,1)] z-[-1] opacity-0 pointer-events-none trans-def",
-                  { "opacity-100 pointer-events-auto": isSeaarchFocus }
-                )}
-              >
-                <div className="overflow-y-scroll h-full [&>:not(:last-child)]:mb-[32px]">
-                  {promotionsData.map((promotion) => (
-                    <Link
-                      key={promotion.name}
-                      to={`/promotion${promotion.link}`}
-                      className="block hover:text-green"
-                    >
-                      {promotion.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <Search
+              isSearchFocus={isSearchFocus}
+              setIsSearchFocus={setIsSearchFocus}
+            />
             <Modal
-              isOpen={isSeaarchFocus}
+              isOpen={isSearchFocus}
               close={() => setIsSearchFocus(false)}
               modalStyle="z-[20]"
             />
-            {profile ? (
+            {isProfileLoading ? (
+              <div className="relative">
+                <Loading />
+              </div>
+            ) : profile ? (
               <div className="lt:hidden">
                 <ProfileDropdown
                   profile={profile}
                   head={
                     <>
                       <span>{textLimit(profile?.fullname || "User", 14)}</span>
-                      <img src={profile.image} alt="avatar" />
+                      <img src={profile.image || avaIcon} alt="avatar" />
                     </>
                   }
                 />
@@ -211,7 +189,6 @@ const Header: FC = () => {
         </div>
         <div className="h-[1px] bg-white"></div>
         <Categories />
-
         <Burger
           isOpen={isBurgerOpen}
           close={() => setIsBurgerOpen(false)}

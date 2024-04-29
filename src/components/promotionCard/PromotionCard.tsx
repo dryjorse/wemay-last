@@ -9,18 +9,18 @@ interface IPromotionCardProps extends IPromotionCard {
 }
 
 const PromotionCard: FC<IPromotionCardProps> = ({
+  id,
   title,
   old_price,
   new_price,
   discount,
   likes,
   image,
-  link,
   disabled = false,
 }) => {
   return (
     <Link
-      to={`/promotion${link}`}
+      to={`/promotion/${id}`}
       className="block max-w-[540px] lt:max-w-[768px]"
       onClick={(e) => disabled && e.preventDefault()}
     >

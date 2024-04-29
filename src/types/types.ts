@@ -20,33 +20,30 @@ export interface ICategory {
 }
 
 export interface IPromotion {
+  id: number;
   title: string;
   old_price: number;
   new_price: number;
   discount: number;
   likes: number;
   image: string;
-  link: string;
+  slider_image: string;
   contacts: string;
   workTime: string;
   end_date: string;
   description: string;
-  address: {
-    name: string;
-    coordinates: number[];
-  };
+  address: string;
 }
 
 export type IPromotionCard = Pick<
   IPromotion,
-  | "title"
-  | "old_price"
-  | "new_price"
-  | "discount"
-  | "likes"
-  | "image"
-  | "link"
+  "title" | "old_price" | "new_price" | "discount" | "likes" | "image" | "id"
 >;
+
+export interface IAddress {
+  lat: string;
+  lon: string;
+}
 
 export interface IReview {
   ava: string;
@@ -95,7 +92,7 @@ export interface IValidationError {
 
 export interface IRegisterResponse {
   message: string;
-  tokens: {access: string, refresh: string};
+  tokens: { access: string; refresh: string };
   // access_token: string;
   // expires_in: number;
   // token_type: string;
