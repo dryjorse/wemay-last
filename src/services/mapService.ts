@@ -7,6 +7,11 @@ class MapService {
       `https://nominatim.openstreetmap.org/search?format=json&q=${name}`
     );
   }
+  getByCoordinates(lat: number, lon: number) {
+    return axios.get<IAddress>(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+    );
+  }
 }
 
 export default new MapService();

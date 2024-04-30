@@ -14,8 +14,11 @@ import whatsappIcon from "../../../assets/images/icons/whatsapp.svg";
 import websiteIcon from "../../../assets/images/icons/website.svg";
 import crossIcon from "../../../assets/images/icons/cross.svg";
 import "swiper/css";
+import { useQuery } from "@tanstack/react-query";
+import mapService from "../../../services/mapService";
 
 const Promotion: FC<IPromotion> = ({
+  id,
   title,
   image,
   old_price,
@@ -29,7 +32,18 @@ const Promotion: FC<IPromotion> = ({
   address,
 }) => {
   const [isContactsOpen, setIsContactsOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState(image);
+  // const [currentImage, setCurrentImage] = useState(image);
+  console.log(workTime)
+
+  const { data: marker } = useQuery({
+    queryKey: ["marker", id],
+    queryFn: () => mapService.getByName(address),
+    select: ({ data }) => data,
+  });
+
+  const addressCoordinates = marker?.[0]
+    ? [marker[0]?.lat, marker[0].lon]
+    : null;
 
   return (
     <section className="container-two pt-[44px] pb-80">
@@ -37,7 +51,7 @@ const Promotion: FC<IPromotion> = ({
       <div className="mt-[32px] flex justify-between gap-[32px] items-start blt:flex-col blt:items-stretch">
         <div className="flex-[0_0_740px] blt:flex-auto">
           <div
-            style={{ backgroundImage: `url(${currentImage})` }}
+            style={{ backgroundImage: `url(${image})` }}
             className="rounded-[24px] w-full h-[454px] flex items-end justify-between bg-cover bg-center bg-no-repeat text-white overflow-hidden trans-def stb:h-[200px]"
           >
             <b className="rounded-[0_16px_0_16px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] leading-[24px]">
@@ -45,7 +59,7 @@ const Promotion: FC<IPromotion> = ({
             </b>
             <div className="rounded-[24px,0px,24px,0px] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center">
               <img src={likeIcon} alt="like" />
-              <span> {likes}</span>
+              <span>{likes?.length || 0}</span>
             </div>
           </div>
           <div className="mt-[24px] flex justify-between items-center tb:flex-col tb:items-start tb:gap-[24px]">
@@ -100,18 +114,18 @@ const Promotion: FC<IPromotion> = ({
             </button>
             <button className="box-secondary border-green rounded-[100px] py-[7.5px] px-[24px] text-center text-14 leading-[19px] text-green">
               <img src={likeGreenIcon} alt="like-green" className="mb-[2px]" />
-              <span>{likes}</span>
+              <span>{likes?.length || 0}</span>
             </button>
           </div>
           <span className="my-[24px] block text-18">Контактная информация</span>
           <span className="text-grey">Телефон</span>
           <a
-              key={contacts}
-              href={`tel:${contacts}`}
-              className="mt-[8px] block text-18 font-bold leading-[23px] font-montserrat"
-            >
-              {contacts}
-            </a>
+            key={contacts}
+            href={`tel:${contacts}`}
+            className="mt-[8px] block text-18 font-bold leading-[23px] font-montserrat"
+          >
+            {contacts}
+          </a>
           {/* {contacts.map((tel) => (
             
           ))} */}
@@ -134,13 +148,13 @@ const Promotion: FC<IPromotion> = ({
             <img src={crossIcon} alt="cross" />
           </button>
           <h2>Связаться</h2>
-          <a
+          {/* <a
             href={`tel:${contacts[0]}`}
             className="btn my-40 flex justify-center gap-[8px] items-center w-[520px]"
           >
             <img src={telIcon} alt="tel" />
             <span>{contacts[0]}</span>
-          </a>
+          </a> */}
           <div className="flex gap-[16px] justify-center items-center">
             <a href="">
               <img src={instagramIcon} alt="instagram" />
@@ -163,25 +177,27 @@ const Promotion: FC<IPromotion> = ({
       <h2 className="mt-80 mb-[32px]">Адреса</h2>
       <span className="text-[18px] leading-[23px]">Адрес</span>
       <span className="mt-[8px] mb-[32px] block text-[18px] leading-[23px]">
-        {address.name}
+        {address}
       </span>
-      <MapContainer
-        // @ts-ignore
-        center={address.coordinates}
-        className="rounded-[24px] max-w-[848px] w-full h-[374px]"
-        zoom={16}
-      >
-        <TileLayer
+      {marker?.[0] && (
+        <MapContainer
           // @ts-ignore
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker
-          // @ts-ignore
-          position={address.coordinates}
-          icon={customMarkerIcon()}
-        ></Marker>
-      </MapContainer>
+          center={addressCoordinates}
+          className="rounded-[24px] max-w-[848px] w-full h-[374px]"
+          zoom={16}
+        >
+          <TileLayer
+            // @ts-ignore
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker
+            // @ts-ignore
+            position={addressCoordinates}
+            icon={customMarkerIcon()}
+          ></Marker>
+        </MapContainer>
+      )}
     </section>
   );
 };

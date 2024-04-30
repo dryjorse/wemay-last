@@ -3,7 +3,7 @@ import { ChangeEvent, FC, useEffect, useState } from "react";
 import { Transition } from "react-transition-group";
 import crossIcon from "../../assets/images/icons/cross-bold.svg";
 import Accordeon from "../ui/accordeon/Accordeon";
-import { categoriesData, promotionsTypeData, sortData } from "../../data/data";
+import { promotionsTypeData, sortData } from "../../data/data";
 import { RootState, useAppDispatch } from "../../store/store";
 import {
   setDiscountPercentage,
@@ -61,15 +61,24 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
   }, [sortValue]);
 
   const handleCategory = (category: string) => {
+    // categoriesT.includes(category)
+    //   ? setCategoriesT((prev) => prev.filter((prevC) => prevC !== category))
+    //   : setCategoriesT((prev) => [...prev, category]);
+
     categoriesT.includes(category)
-      ? setCategoriesT((prev) => prev.filter((prevC) => prevC !== category))
-      : setCategoriesT((prev) => [...prev, category]);
+      ? setCategoriesT([])
+      : setCategoriesT([category]);
   };
 
   const handlePromotionType = (type: string) => {
+    // promotionTypesT.includes(type)
+    //   ? setPromotionTypesT((prev) => prev.filter((prevC) => prevC !== type))
+    //   : setPromotionTypesT((prev) => [...prev, type]);
+
     promotionTypesT.includes(type)
-      ? setPromotionTypesT((prev) => prev.filter((prevC) => prevC !== type))
-      : setPromotionTypesT((prev) => [...prev, type]);
+      ? setPromotionTypesT([])
+      : setPromotionTypesT([type]);
+    //
   };
 
   const hangleDiscountPercentage = (event: ChangeEvent<HTMLInputElement>) =>
@@ -166,36 +175,51 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
                   maxHeight="fit-content"
                 >
                   {data?.map((category) => (
-                    <Accordeon
-                      key={category.title}
+                    <Checkbox
                       style="mt-20"
-                      bodyStyle="pl-[26px]"
-                      button={
-                        <Checkbox
-                          name={category.title}
-                          icon={
-                            <div
-                              style={{
-                                maskImage: `url(${category.icon})`,
-                              }}
-                              className="w-[16px] h-[16px] bg-[#4F4F4F] opacity-50"
-                            ></div>
-                          }
-                          checked={categoriesT.includes(category.title)}
-                          onChange={() => handleCategory(category.title)}
-                        />
+                      key={category.title}
+                      name={category.title}
+                      icon={
+                        <div
+                          style={{
+                            maskImage: `url(${category.icon})`,
+                          }}
+                          className="w-[16px] h-[16px] bg-[#4F4F4F] opacity-50"
+                        ></div>
                       }
-                    >
-                      {/* {category.subCategories.map((subCategory) => (
-                        <Checkbox
-                          style="mt-20"
-                          key={subCategory.name}
-                          name={subCategory.name}
-                          checked={categoriesT.includes(category.name)}
-                          onChange={() => handleCategory(category.name)}
-                        />
-                      ))} */}
-                    </Accordeon>
+                      checked={categoriesT.includes(category.title)}
+                      onChange={() => handleCategory(category.title)}
+                    />
+                    // <Accordeon
+                    //   key={category.title}
+                    //   style="mt-20"
+                    //   bodyStyle="pl-[26px]"
+                    //   button={
+                    //     <Checkbox
+                    //       name={category.title}
+                    //       icon={
+                    //         <div
+                    //           style={{
+                    //             maskImage: `url(${category.icon})`,
+                    //           }}
+                    //           className="w-[16px] h-[16px] bg-[#4F4F4F] opacity-50"
+                    //         ></div>
+                    //       }
+                    //       checked={categoriesT.includes(category.title)}
+                    //       onChange={() => handleCategory(category.title)}
+                    //     />
+                    //   }
+                    // >
+                    //   {/* {category.subCategories.map((subCategory) => (
+                    //     <Checkbox
+                    //       style="mt-20"
+                    //       key={subCategory.name}
+                    //       name={subCategory.name}
+                    //       checked={categoriesT.includes(category.name)}
+                    //       onChange={() => handleCategory(category.name)}
+                    //     />
+                    //   ))} */}
+                    // </Accordeon>
                   ))}
                 </Accordeon>
                 <h3 className="my-[24px] text-18 font-bold">Тип акции</h3>

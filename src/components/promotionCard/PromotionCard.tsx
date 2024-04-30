@@ -1,8 +1,10 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
 import { IPromotionCard } from "../../types/types";
 import { Link } from "react-router-dom";
 import starIcon from "../../assets/images/icons/star.svg";
 import likeIcon from "../../assets/images/icons/like.svg";
+import { useMutation } from "@tanstack/react-query";
+import promotionService from "../../services/promotionService";
 
 interface IPromotionCardProps extends IPromotionCard {
   disabled?: boolean;
@@ -18,6 +20,13 @@ const PromotionCard: FC<IPromotionCardProps> = ({
   image,
   disabled = false,
 }) => {
+  const { mutate: like } = useMutation({ mutationFn: promotionService.like });
+
+  const onClickLike = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    like(id);
+  };
+
   return (
     <Link
       to={`/promotion/${id}`}
@@ -36,14 +45,19 @@ const PromotionCard: FC<IPromotionCardProps> = ({
             <span className="rounded-[0_24px_0_24px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] font-bold">
               -{discount}%
             </span>
-            <div className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center">
+            <button
+              onClick={onClickLike}
+              className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center"
+            >
               <img src={likeIcon} alt="like" />
-              <span className="font-medium">{likes}</span>
-            </div>
+              <span className="font-medium">{likes?.length || 0}</span>
+            </button>
           </div>
         </div>
       </div>
-      <h3 className="mt-[24px] mb-[16px] font-semibold stb:font-normal">{title}</h3>
+      <h3 className="mt-[24px] mb-[16px] font-semibold stb:font-normal">
+        {title}
+      </h3>
       <div className="flex gap-[8px] items-center text-[20px] leading-[24px] stb:text-18">
         <span className="relative font-medium text-[#828282]">
           от {old_price} сом{" "}

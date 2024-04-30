@@ -4,10 +4,13 @@ export interface IResults<T> {
 }
 
 export interface ICompany {
-  link: string;
+  id: number;
   image: string;
   promotions_count: number;
+  name: string;
   discounts: number;
+  description: string;
+  owner: string;
 }
 
 export interface ICategory {
@@ -25,7 +28,7 @@ export interface IPromotion {
   old_price: number;
   new_price: number;
   discount: number;
-  likes: number;
+  likes: number[];
   image: string;
   slider_image: string;
   contacts: string;
@@ -43,6 +46,7 @@ export type IPromotionCard = Pick<
 export interface IAddress {
   lat: string;
   lon: string;
+  display_name: string;
 }
 
 export interface IReview {
@@ -82,7 +86,7 @@ export interface IPromotionFields {
   price: number;
   oldPrice: number;
   contacts: string[];
-  addresses: string[];
+  address: string;
 }
 
 export interface IValidationError {

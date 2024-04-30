@@ -40,7 +40,7 @@
   }
 
   .App {
-    @apply overflow-hidden
+    @apply overflow-hidden;
   }
   .trans-def {
     transition: 0.1s ease-in all;
@@ -95,6 +95,6 @@
     @apply rounded-[24px] border-2 border-green py-10 px-[47px] text-green font-bold leading-[20px] font-montserrat cursor-pointer;
   }
   .btn {
-    @apply rounded-[30px] bg-green py-[16px] px-[49px] text-white font-bold font-montserrat text-center trans-def hover:brightness-75 active:brightness-105;
+    @apply rounded-[30px] bg-green py-[16px] px-[49px] text-white font-bold font-montserrat text-center trans-def hover:brightness-75 active:brightness-105 disabled:pointer-events-none disabled:bg-[rgba(203,203,203,1)] disabled:text-[rgba(129,129,129,1)];
   }
 }

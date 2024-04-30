@@ -8,6 +8,7 @@ import { useAppDispatch } from "../../store/store";
 import { setCategories } from "../../store/slices/filterSlice";
 import { useQuery } from "@tanstack/react-query";
 import categoryService from "../../services/categoryService";
+import profileService from "../../services/profileService";
 
 interface IBurgerProps {
   isOpen: boolean;
@@ -17,11 +18,20 @@ interface IBurgerProps {
 
 const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
   const dispatch = useAppDispatch();
+
   const { data } = useQuery({
     queryKey: ["categories"],
     queryFn: () => categoryService.getAll(),
     select: ({ data }) => data,
   });
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => profileService.getProfile(),
+    select: ({ data }) => data,
+    // enabled: !!localStorage.getItem("token"),
+  });
+
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -73,16 +83,18 @@ const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
                     {link.label}
                   </Link>
                 ) : (
-                  <button
-                    key={link.label}
-                    onClick={() => {
-                      state === "entered" && close();
-                      authOpen();
-                    }}
-                    className="block w-full py-20 px-[24px] border-b border-[#D7D7D7]"
-                  >
-                    {link.label}
-                  </button>
+                  !profile && (
+                    <button
+                      key={link.label}
+                      onClick={() => {
+                        state === "entered" && close();
+                        authOpen();
+                      }}
+                      className="block w-full py-20 px-[24px] border-b border-[#D7D7D7]"
+                    >
+                      {link.label}
+                    </button>
+                  )
                 )
               )}
               <ul className="mt-[32px]">
@@ -98,7 +110,9 @@ const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
                       <strong className="text-18 text-grey leading-[130%]">
                         {category.title}
                       </strong>
-                      <span className="text-14 leading-[140%]">{category.count_category} акций</span>
+                      <span className="text-14 leading-[140%]">
+                        {category.count_category} акций
+                      </span>
                     </Link>
                   </li>
                 ))}

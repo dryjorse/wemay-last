@@ -70,8 +70,8 @@ const Categories: FC = () => {
                     { "bg-green": categories.includes(category.title) }
                   )}
                 ></div>
-                {/* <span>{category.name}</span> */}
-                <div className="flex gap-[9px] items-center">
+                <span>{category.title}</span>
+                {/* <div className="flex gap-[9px] items-center">
                   <span className="whitespace-nowrap">{category.title}</span>
                   <div
                     style={{ maskImage: `url(${smallArrowDownIcon})` }}
@@ -80,7 +80,7 @@ const Categories: FC = () => {
                       { "bg-green": categories.includes(category.title) }
                     )}
                   ></div>
-                </div>
+                </div> */}
               </Link>
             </SwiperSlide>
           ))}

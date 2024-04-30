@@ -15,7 +15,7 @@ interface Props {
 const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const { data, isLoading } = useQuery({
-    queryKey: ["promotions"],
+    queryKey: ["promotions-search"],
     queryFn: () => promotionService.getAll(),
     select: ({ data }) => data,
   });

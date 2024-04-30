@@ -30,7 +30,7 @@ const MapMarker: FC<IMapMarkerProps> = ({
   setIsPromotionOpen,
   ...promotion
 }) => {
-  if (!promotion) return null;
+  if (!addresses) return null;
 
   return (
     <Marker
@@ -57,6 +57,7 @@ const Map: FC<IMapProps> = ({ isOpen, close }) => {
     queryKey: ["promotions"],
     queryFn: () => promotionService.getAll(),
     select: ({ data }) => data,
+    enabled: false,
   });
 
   const promotionsMarkers = useQueries({

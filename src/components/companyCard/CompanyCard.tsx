@@ -3,14 +3,14 @@ import { ICompany } from "../../types/types";
 import { Link } from "react-router-dom";
 
 const CompanyCard: FC<ICompany> = ({
-  link,
+  id,
   image,
   promotions_count,
   discounts,
 }) => {
   return (
     <Link
-      to={link}
+      to={`/company/${id}`}
       className="block rounded-[24px] border border-gray px-[12px] pb-40 w-[205px] h-[280px] trans-def hover:shadow-[0px_4px_13px_0px_#00000026]"
     >
       <div className="mb-[8px]">
