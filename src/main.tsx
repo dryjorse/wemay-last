@@ -5,9 +5,17 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import "./index.css";
+import { setErrorNotification } from "./store/slices/notificationSlice.ts";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 0 } },
+  defaultOptions: {
+    queries: { refetchOnWindowFocus: false, retry: 0 },
+    mutations: {
+      onError: (error) => {
+        store.dispatch(setErrorNotification(error.message));
+      },
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

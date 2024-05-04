@@ -1,7 +1,7 @@
 import { FC, ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 import { textLimit } from "../../data/data";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { IUser } from "../../types/types";
 import Burger from "../burger/Burger";
 import Auth from "../auth/Auth";
@@ -17,13 +17,19 @@ import personIcon from "../../assets/images/icons/person.svg";
 import profileMenuIcon from "../../assets/images/icons/profile-menu.svg";
 import heartIcon from "../../assets/images/icons/heart-black.svg";
 import starIcon from "../../assets/images/icons/star-black.svg";
+import announcementIcon from "../../assets/images/icons/announcement.svg";
 import settingsIcon from "../../assets/images/icons/settings.svg";
 import exitIcon from "../../assets/images/icons/exit.svg";
 import Categories from "../categories/Categories";
 import Search from "../search/Search";
 import avaIcon from "../../assets/images/icons/ava.svg";
-import "swiper/css";
 import Loading from "../ui/loading/Loading";
+import { deleteTokens } from "../../common/api.helpers";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../store/store";
+import { setIsAuth } from "../../store/slices/authSlice";
+import { useProfile } from "../../hooks/useProfile";
+import "swiper/css";
 
 interface IProfileDropdownProps {
   head: ReactNode;
@@ -31,6 +37,15 @@ interface IProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
+  const dispatch = useAppDispatch();
+  const { mutate: logout } = useMutation({
+    mutationFn: profileService.logout,
+    onSuccess: () => {
+      dispatch(setIsAuth(false));
+      deleteTokens();
+    },
+  });
+
   return (
     <Dropdown
       headClassName="flex gap-[11px] items-center"
@@ -39,7 +54,11 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
     >
       {profile ? (
         <>
-          <img src={profile.image} alt="ava" />
+          <img
+            alt="ava"
+            src={profile.image || avaIcon}
+            className="w-[40px] h-[40px]"
+          />
           <h3 className="mt-[12px] mb-[6px] text-[rgba(51,51,51,1)] font-bold">
             {profile.fullname}
           </h3>
@@ -66,13 +85,28 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
             <span>4</span>
           </Link>
           <Link
+            to="/my-promotions"
+            className="mt-[24px] flex gap-[12px] items-center"
+          >
+            <img
+              src={announcementIcon}
+              alt="announcement"
+              className="opacity-60"
+            />
+            <span>Мои акции</span>
+            <span>0</span>
+          </Link>
+          <Link
             to="/profile"
             className="mt-[24px] flex gap-[12px] items-center"
           >
             <img src={settingsIcon} alt="heart" />
             <span>Настройки</span>
           </Link>
-          <button className="mt-[24px] flex gap-[12px] items-center">
+          <button
+            onClick={() => logout()}
+            className="mt-[24px] flex gap-[12px] items-center"
+          >
             <img src={exitIcon} alt="heart" />
             <span>Выход</span>
           </button>
@@ -88,13 +122,8 @@ const Header: FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isSearchFocus, setIsSearchFocus] = useState(false);
-
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: () => profileService.getProfile(),
-    select: ({ data }) => data,
-    // enabled: !!localStorage.getItem("token"),
-  });
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
 
   return (
     <>
@@ -122,9 +151,9 @@ const Header: FC = () => {
             <Link to="/" className="pt-[5px]">
               <img src={logoIcon} alt="logo" />
             </Link>
-            {profile ? (
+            {isAuth ? (
               <ProfileDropdown
-                profile={profile}
+                profile={profile!}
                 head={<img src={profileMenuIcon} alt="three-points" />}
               />
             ) : (
@@ -164,14 +193,18 @@ const Header: FC = () => {
               <div className="relative">
                 <Loading />
               </div>
-            ) : profile ? (
+            ) : isAuth && profile ? (
               <div className="lt:hidden">
                 <ProfileDropdown
                   profile={profile}
                   head={
                     <>
                       <span>{textLimit(profile?.fullname || "User", 14)}</span>
-                      <img src={profile.image || avaIcon} alt="avatar" />
+                      <img
+                        alt="avatar"
+                        src={profile.image || avaIcon}
+                        className="w-[40px] h-[40px]"
+                      />
                     </>
                   }
                 />

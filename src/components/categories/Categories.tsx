@@ -44,7 +44,7 @@ const Categories: FC = () => {
           }}
           breakpoints={{ 425: { slidesPerView: "auto" } }}
         >
-          {data?.map((category) => (
+          {data?.results?.map((category) => (
             <SwiperSlide key={category.title} className="w-fit">
               <Link
                 to="/promotions"

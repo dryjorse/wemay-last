@@ -70,6 +70,7 @@ const Map: FC<IMapProps> = ({ isOpen, close }) => {
             addresses: { lat: data[0].lat, lon: data[0].lon },
             ...promotion,
           }),
+          enabled: !!promotion.address,
         }))
       : [],
     combine: (results) => ({

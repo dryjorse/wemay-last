@@ -14,7 +14,7 @@ export interface ICompany {
 }
 
 export interface ICategory {
-  link: string;
+  id: number;
   title: string;
   image: string;
   icon: string;
@@ -25,10 +25,10 @@ export interface ICategory {
 export interface IPromotion {
   id: number;
   title: string;
-  old_price: number;
+  old_price?: number;
   new_price: number;
-  discount: number;
-  likes: number[];
+  discount?: number;
+  likes: string[];
   image: string;
   slider_image: string;
   contacts: string;
@@ -60,13 +60,19 @@ export interface IReview {
 export interface IUser {
   username: string;
   fullname: string;
-  id: number;
+  id: string;
   email: string;
   image: string;
 }
 
 export interface MyKnownError {
   errorMessage: string;
+}
+
+export type AuthType = "login" | "register" | "forgot-password";
+
+export interface ImageFile extends File {
+  imageUrl: string;
 }
 
 export interface IAuthFields {
@@ -87,6 +93,7 @@ export interface IPromotionFields {
   oldPrice: number;
   contacts: string[];
   address: string;
+  endDate: string;
 }
 
 export interface IValidationError {

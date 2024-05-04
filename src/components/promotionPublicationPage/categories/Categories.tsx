@@ -1,20 +1,29 @@
 import { Dispatch, FC } from "react";
-import { categoriesData } from "../../../data/data";
 import checkedIcon from "../../../assets/images/icons/checked.svg";
 import checkedWrapperIcon from "../../../assets/images/icons/checked-wrapper.svg";
 import Select from "../../select/Select";
 import Accordeon from "../../ui/accordeon/Accordeon";
+import { useQuery } from "@tanstack/react-query";
+import categoryService from "../../../services/categoryService";
 
 interface ICategoriesProps {
-  categories: string[];
-  setCategories: Dispatch<React.SetStateAction<string[]>>;
+  categories: number[];
+  setCategories: Dispatch<React.SetStateAction<number[]>>;
 }
 
 const Categories: FC<ICategoriesProps> = ({ categories, setCategories }) => {
-  const handleCategory = (category: string) => {
-    categories.includes(category)
-      ? setCategories((prev) => prev.filter((cat) => cat !== category))
-      : setCategories((prev) => [...prev, category]);
+  const { data } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.getAll(),
+    select: ({ data }) => data,
+  });
+
+  const handleCategory = (id: number) => {
+    // categories.includes(category)
+    //   ? setCategories((prev) => prev.filter((cat) => cat !== category))
+    //   : setCategories((prev) => [...prev, category]);
+
+    categories.includes(id) ? setCategories([]) : setCategories([id]);
   };
 
   return (
@@ -22,18 +31,18 @@ const Categories: FC<ICategoriesProps> = ({ categories, setCategories }) => {
       <h3 className="mb-[8px] title-3">Выберите категорию</h3>
       <Select className="max-w-[508px]">
         <div className="py-[17px] px-[24px] bg-white">
-          {categoriesData.map((category) => (
-            <div key={category.name} className="mt-20 flex gap-[8px]">
+          {data?.results?.map((category) => (
+            <div key={category.title} className="mt-20 flex gap-[8px]">
               <label
-                htmlFor={`category-${category.name}-filter`}
+                htmlFor={`category-${category.title}-filter`}
                 className="relative border border-[#6C6C6C] rounded-[4px] mt-[5px] w-[16px] h-[16px] flex justify-center items-center trans-def cursor-pointer has-[:checked]:border-0 has-[:checked]:bg-green"
               >
                 <input
-                  id={`category-${category.name}-filter`}
+                  id={`category-${category.title}-filter`}
                   type="checkbox"
                   className="peer hidden"
-                  checked={categories.includes(category.name)}
-                  onChange={() => handleCategory(category.name)}
+                  checked={categories.includes(category.id)}
+                  onChange={() => handleCategory(category.id)}
                   form="publicate-promotion-form"
                 />
                 <img
@@ -47,9 +56,16 @@ const Categories: FC<ICategoriesProps> = ({ categories, setCategories }) => {
                   className="absolute top-0 left-0 opacity-0 trans-def peer-checked:opacity-100"
                 />
               </label>
-              <Accordeon
+              <div className="flex gap-[8px] items-center font-mulish">
+                <div
+                  style={{ maskImage: `url(${category.icon})` }}
+                  className="w-[16px] h-[16px] bg-[#4F4F4F] opacity-50"
+                ></div>
+                <span>{category.title}</span>
+              </div>
+              {/* <Accordeon
                 style="flex-auto"
-                // bodyStyle="pl-[26px]"
+                bodyStyle="pl-[26px]"
                 button={
                   <div className="flex gap-[8px] items-center font-mulish">
                     <div
@@ -60,7 +76,7 @@ const Categories: FC<ICategoriesProps> = ({ categories, setCategories }) => {
                   </div>
                 }
               >
-                {/* {category.subCategories.map((subCategory) => (
+                {category.subCategories.map((subCategory) => (
               <Checkbox
                 style="mt-20"
                 key={subCategory.name}
@@ -68,8 +84,8 @@ const Categories: FC<ICategoriesProps> = ({ categories, setCategories }) => {
                 checked={categories.includes(category.name)}
                 onChange={() => handleCategory(category.name)}
               />
-            ))} */}
-              </Accordeon>
+            ))}
+              </Accordeon> */}
             </div>
           ))}
         </div>
