@@ -1,52 +1,22 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import authService from "../../services/authService";
-import {
-  IAuthFields,
-  ILoginResponse,
-  IRegisterResponse,
-  MyKnownError,
-} from "../../types/types";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-export const register = createAsyncThunk<
-  IRegisterResponse,
-  IAuthFields,
-  { rejectValue: MyKnownError }
->("auth/register", async (fields, { rejectWithValue }) => {
-  try {
-    const { data } = await authService.register(fields);
-    localStorage.setItem("token", data.access_token);
-    return data;
-  } catch (error) {
-    if (error instanceof Error)
-      return rejectWithValue({ errorMessage: error.message });
-    else return rejectWithValue({ errorMessage: "Прозиошла ошибка" });
-  }
-});
+interface State {
+  isAuth: boolean;
+}
 
-export const login = createAsyncThunk<
-  ILoginResponse,
-  IAuthFields,
-  { rejectValue: MyKnownError }
->("auth/register", async (fields, { rejectWithValue }) => {
-  try {
-    const { data } = await authService.login(fields);
-    console.log(data);
-    localStorage.setItem("token", data.access_token);
-    return data;
-  } catch (error) {
-    if (error instanceof Error)
-      return rejectWithValue({ errorMessage: error.message });
-    else return rejectWithValue({ errorMessage: "Прозиошла ошибка" });
-  }
-});
-
-const initialState = {};
+const initialState: State = {
+  isAuth: false,
+};
 
 export const authSlice = createSlice({
   name: "authSlice",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    // builder.addCase(register.p)
+  reducers: {
+    setIsAuth(state, action: PayloadAction<boolean>) {
+      state.isAuth = action.payload;
+    },
   },
 });
+
+export default authSlice.reducer;
+export const { setIsAuth } = authSlice.actions;

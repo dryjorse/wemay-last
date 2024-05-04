@@ -5,6 +5,7 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { customMarkerIcon } from "../../../data/data";
 import Modal from "../../ui/modal/Modal";
 import likeIcon from "../../../assets/images/icons/like.svg";
+import likedIcon from "../../../assets/images/icons/liked.svg";
 import likeGreenIcon from "../../../assets/images/icons/like-green.svg";
 import timeIcon from "../../../assets/images/icons/time.svg";
 import telIcon from "../../../assets/images/icons/tel.svg";
@@ -13,9 +14,12 @@ import facebookIcon from "../../../assets/images/icons/facebook.svg";
 import whatsappIcon from "../../../assets/images/icons/whatsapp.svg";
 import websiteIcon from "../../../assets/images/icons/website.svg";
 import crossIcon from "../../../assets/images/icons/cross.svg";
-import "swiper/css";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import mapService from "../../../services/mapService";
+import profileService from "../../../services/profileService";
+import promotionService from "../../../services/promotionService";
+import clsx from "clsx";
+import "swiper/css";
 
 const Promotion: FC<IPromotion> = ({
   id,
@@ -33,13 +37,33 @@ const Promotion: FC<IPromotion> = ({
 }) => {
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   // const [currentImage, setCurrentImage] = useState(image);
-  console.log(workTime)
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => profileService.getProfile(),
+    select: ({ data }) => data,
+  });
 
   const { data: marker } = useQuery({
     queryKey: ["marker", id],
     queryFn: () => mapService.getByName(address),
     select: ({ data }) => data,
+    enabled: !!address,
   });
+
+  const [localLikes, setLocalLikes] = useState(likes);
+
+  const { mutate: like } = useMutation({
+    mutationFn: promotionService.like,
+  });
+
+  const onClickLike = () => {
+    like(id);
+    setLocalLikes((prev) =>
+      prev.includes(profile?.id!)
+        ? prev.filter((id) => id !== profile?.id)
+        : [...prev, profile?.id!]
+    );
+  };
 
   const addressCoordinates = marker?.[0]
     ? [marker[0]?.lat, marker[0].lon]
@@ -58,8 +82,11 @@ const Promotion: FC<IPromotion> = ({
               -{discount}%
             </b>
             <div className="rounded-[24px,0px,24px,0px] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center">
-              <img src={likeIcon} alt="like" />
-              <span>{likes?.length || 0}</span>
+              <img
+                alt="like"
+                src={localLikes.includes(profile?.id!) ? likedIcon : likeIcon}
+              />
+              <span>{localLikes?.length || 0}</span>
             </div>
           </div>
           <div className="mt-[24px] flex justify-between items-center tb:flex-col tb:items-start tb:gap-[24px]">
@@ -97,24 +124,49 @@ const Promotion: FC<IPromotion> = ({
           </div>
         </div>
         <div className="rounded-[24px] p-[32px] bg-gray flex-[0_1_508px] font-mulish">
-          <span className="relative text-[24px]">
-            от {new_price} сом{" "}
-            <div className="absolute top-[calc(50%+1px)] left-[-3px] w-full h-[1px] bg-black"></div>
-          </span>
-          <b className="ml-[15px] text-[24px]">от {old_price} сом</b>
-          <span className="block mt-[8px] mb-[24px] text-18 leading-[23px] text-[#4F4F4F]">
-            Экономия {old_price} сом
-          </span>
-          <div className="flex justify-between items-center gap-[8px] blt:justify-start">
+          {old_price && (
+            <span className="relative text-[24px]">
+              от {old_price} сом{" "}
+              <div className="absolute top-[calc(50%+1px)] left-[-3px] w-full h-[1px] bg-black"></div>
+            </span>
+          )}
+          <b
+            className={clsx("text-[24px]", {
+              "ml-[15px]": old_price,
+            })}
+          >
+            от {new_price} сом
+          </b>
+          {old_price && (
+            <span className="block mt-[8px] mb-[24px] text-18 leading-[23px] text-[#4F4F4F]">
+              Экономия {old_price - new_price} сом
+            </span>
+          )}
+          <div
+            className={clsx(
+              "flex justify-between items-center gap-[8px] blt:justify-start",
+              { "mt-[24px]": !old_price }
+            )}
+          >
             <button
               onClick={() => setIsContactsOpen(true)}
               className="btn flex-[0_1_630px] text-center"
             >
               Связаться
             </button>
-            <button className="box-secondary border-green rounded-[100px] py-[7.5px] px-[24px] text-center text-14 leading-[19px] text-green">
-              <img src={likeGreenIcon} alt="like-green" className="mb-[2px]" />
-              <span>{likes?.length || 0}</span>
+            <button
+              onClick={onClickLike}
+              disabled={!profile?.id}
+              className="box-secondary border-green rounded-[100px] py-[7.5px] px-[24px] text-center text-14 leading-[19px] text-green disabled:pointer-events-none"
+            >
+              <img
+                src={
+                  localLikes.includes(profile?.id!) ? likedIcon : likeGreenIcon
+                }
+                alt="like-green"
+                className="mb-[2px]"
+              />
+              <span>{localLikes?.length || 0}</span>
             </button>
           </div>
           <span className="my-[24px] block text-18">Контактная информация</span>
@@ -174,29 +226,31 @@ const Promotion: FC<IPromotion> = ({
 
       <h2 className="mt-80 mb-[32px]">Описание</h2>
       <p>{description}</p>
-      <h2 className="mt-80 mb-[32px]">Адреса</h2>
-      <span className="text-[18px] leading-[23px]">Адрес</span>
-      <span className="mt-[8px] mb-[32px] block text-[18px] leading-[23px]">
-        {address}
-      </span>
       {marker?.[0] && (
-        <MapContainer
-          // @ts-ignore
-          center={addressCoordinates}
-          className="rounded-[24px] max-w-[848px] w-full h-[374px]"
-          zoom={16}
-        >
-          <TileLayer
+        <>
+          <h2 className="mt-80 mb-[32px]">Адреса</h2>
+          <span className="text-[18px] leading-[23px]">Адрес</span>
+          <span className="mt-[8px] mb-[32px] block text-[18px] leading-[23px]">
+            {address}
+          </span>
+          <MapContainer
             // @ts-ignore
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker
-            // @ts-ignore
-            position={addressCoordinates}
-            icon={customMarkerIcon()}
-          ></Marker>
-        </MapContainer>
+            center={addressCoordinates}
+            className="rounded-[24px] max-w-[848px] w-full h-[374px]"
+            zoom={16}
+          >
+            <TileLayer
+              // @ts-ignore
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              // @ts-ignore
+              position={addressCoordinates}
+              icon={customMarkerIcon()}
+            ></Marker>
+          </MapContainer>
+        </>
       )}
     </section>
   );

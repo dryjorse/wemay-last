@@ -1,10 +1,12 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { IPromotionCard } from "../../types/types";
 import { Link } from "react-router-dom";
 import starIcon from "../../assets/images/icons/star.svg";
 import likeIcon from "../../assets/images/icons/like.svg";
-import { useMutation } from "@tanstack/react-query";
+import likedIcon from "../../assets/images/icons/liked.svg";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
+import profileService from "../../services/profileService";
 
 interface IPromotionCardProps extends IPromotionCard {
   disabled?: boolean;
@@ -20,11 +22,29 @@ const PromotionCard: FC<IPromotionCardProps> = ({
   image,
   disabled = false,
 }) => {
-  const { mutate: like } = useMutation({ mutationFn: promotionService.like });
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => profileService.getProfile(),
+    select: ({ data }) => data,
+  });
+  const [localLikes, setLocalLikes] = useState(likes || []);
+
+  const { mutate: like } = useMutation({
+    mutationFn: promotionService.like,
+  });
+
+  useEffect(() => {
+    likes && setLocalLikes(likes);
+  }, [likes]);
 
   const onClickLike = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     like(id);
+    setLocalLikes((prev) =>
+      prev.includes(profile?.id!)
+        ? prev.filter((id) => id !== profile?.id)
+        : [...prev, profile?.id!]
+    );
   };
 
   return (
@@ -42,15 +62,23 @@ const PromotionCard: FC<IPromotionCardProps> = ({
             <img src={starIcon} alt="star" />
           </button>
           <div className="flex justify-between">
-            <span className="rounded-[0_24px_0_24px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] font-bold">
-              -{discount}%
-            </span>
+            {discount ? (
+              <span className="rounded-[0_24px_0_24px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] font-bold">
+                -{discount}%
+              </span>
+            ) : (
+              <div></div>
+            )}
             <button
               onClick={onClickLike}
-              className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center"
+              disabled={!profile?.id}
+              className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center disabled:pointer-events-none"
             >
-              <img src={likeIcon} alt="like" />
-              <span className="font-medium">{likes?.length || 0}</span>
+              <img
+                src={localLikes.includes(profile?.id!) ? likedIcon : likeIcon}
+                alt="like"
+              />
+              <span className="font-medium">{localLikes?.length || 0}</span>
             </button>
           </div>
         </div>
@@ -59,10 +87,12 @@ const PromotionCard: FC<IPromotionCardProps> = ({
         {title}
       </h3>
       <div className="flex gap-[8px] items-center text-[20px] leading-[24px] stb:text-18">
-        <span className="relative font-medium text-[#828282]">
-          от {old_price} сом{" "}
-          <div className="absolute top-[calc(50%)] left-0 right-0 h-[1px] bg-[#828282]"></div>
-        </span>
+        {old_price && (
+          <span className="relative font-medium text-[#828282]">
+            от {old_price} сом{" "}
+            <div className="absolute top-[calc(50%)] left-0 right-0 h-[1px] bg-[#828282]"></div>
+          </span>
+        )}
         <b>от {new_price} сом</b>
       </div>
     </Link>

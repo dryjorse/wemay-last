@@ -174,7 +174,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
                   bodyStyle="duration-[.2s]"
                   maxHeight="fit-content"
                 >
-                  {data?.map((category) => (
+                  {data?.results?.map((category) => (
                     <Checkbox
                       style="mt-20"
                       key={category.title}

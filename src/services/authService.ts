@@ -1,5 +1,5 @@
 import { ILoginResponse, IRegisterResponse } from "./../types/types";
-import { $api, } from "../common/api";
+import { $api } from "../common/api";
 import { IAuthFields } from "../types/types";
 
 class AuthService {
@@ -7,21 +7,17 @@ class AuthService {
     return $api.post<IRegisterResponse>("users/register/", {
       email: data.email,
       password: data.password,
-      // client_id: CLIENT_ID,
-      // client_secret: CLIENT_SECRET,
-      // grant_type: "password",
     });
   }
   async login(data: IAuthFields) {
     return $api.post<ILoginResponse>("users/login/", {
-      // client_id: 'clientId',
-      // client_secret: 'CLIENT_SECRET',
-      // grant_type: "password",
       email: data.email,
       password: data.password,
     });
   }
+  async forgotPassword(email: string) {
+    return $api.post("auth/users/reset_password/", { email });
+  }
 }
-
 
 export default new AuthService();

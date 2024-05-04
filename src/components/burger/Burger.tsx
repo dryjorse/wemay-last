@@ -8,7 +8,7 @@ import { useAppDispatch } from "../../store/store";
 import { setCategories } from "../../store/slices/filterSlice";
 import { useQuery } from "@tanstack/react-query";
 import categoryService from "../../services/categoryService";
-import profileService from "../../services/profileService";
+import { useProfile } from "../../hooks/useProfile";
 
 interface IBurgerProps {
   isOpen: boolean;
@@ -19,17 +19,11 @@ interface IBurgerProps {
 const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
   const dispatch = useAppDispatch();
 
+  const { data: profile } = useProfile();
   const { data } = useQuery({
     queryKey: ["categories"],
     queryFn: () => categoryService.getAll(),
     select: ({ data }) => data,
-  });
-
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    queryFn: () => profileService.getProfile(),
-    select: ({ data }) => data,
-    // enabled: !!localStorage.getItem("token"),
   });
 
   useEffect(() => {
@@ -98,7 +92,7 @@ const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
                 )
               )}
               <ul className="mt-[32px]">
-                {data?.map((category) => (
+                {data?.results?.map((category) => (
                   <li key={category.title}>
                     <Link
                       to="/promotions"

@@ -99,8 +99,8 @@ const Promotions: FC<IPromotions> = ({
               <span>Не найдено акций</span>
             </div>
           ) : (
-            data?.results?.map((promotion, key) => (
-              <PromotionCard key={key} {...promotion} />
+            data?.results?.map((promotion) => (
+              <PromotionCard key={promotion.id} {...promotion} />
             ))
           )}
         </div>

@@ -12,7 +12,7 @@ const MyPromotionsPage: FC = () => {
       <div className="flex justify-between">
         <h2>Мои акции</h2>
         <Link
-          to="/add-promotion"
+          to="/promotion-publicate"
           className="btn rounded-[24px] py-[22px] flex gap-[10px] items-center"
         >
           <img src={plusIcon} alt="plus" />

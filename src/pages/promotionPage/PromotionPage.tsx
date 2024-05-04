@@ -12,7 +12,7 @@ const PromotionPage: FC = () => {
   const { data: promotion } = useQuery({
     queryKey: ["promotions", id],
     queryFn: () => promotionService.getById(+(id || 0)),
-    select: ({ data }) => data
+    select: ({ data }) => data,
   });
 
   if (!promotion) return <div></div>;
@@ -25,7 +25,7 @@ const PromotionPage: FC = () => {
       </div>
       <Promotion {...promotion} />
       {/* <Reviews reviews={promotion.reviews} /> */}
-      <PopularPromotions />
+      {/* <PopularPromotions /> */}
     </>
   );
 };
