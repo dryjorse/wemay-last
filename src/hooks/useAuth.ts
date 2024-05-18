@@ -8,7 +8,7 @@ import { setNotification } from "../store/slices/notificationSlice";
 export const useAuth = (
   authType: "login" | "register",
   isRemember: boolean,
-  onError: () => void
+  onError: (error: any) => void
 ) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -25,9 +25,6 @@ export const useAuth = (
         )
       );
     },
-    onError: (error: any) => {
-      error.response.data.message === "User with this email already exists." &&
-        onError();
-    },
+    onError
   });
 };

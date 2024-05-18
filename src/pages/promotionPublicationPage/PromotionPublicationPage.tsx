@@ -1,12 +1,10 @@
-import { FC, memo, useState } from "react";
-import { promotionsTypeData } from "../../data/data";
+import { ChangeEvent, FC, memo, useEffect, useState } from "react";
+import { pickerSx, promotionsTypeData } from "../../data/data";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { IPromotionFields, ImageFile } from "../../types/types";
+import { IImage, IPromotionFields, ImageFile } from "../../types/types";
 import Radiobox from "../../components/ui/radiobox/Radiobox";
-import Contacts from "../../components/promotionPublicationPage/contacts/Contacts";
 import Categories from "../../components/promotionPublicationPage/categories/Categories";
 import Input from "../../components/ui/input/Input";
-import Schedule from "../../components/promotionPublicationPage/schedule/Schedule";
 import clsx from "clsx";
 import Addreses from "../../components/promotionPublicationPage/addreses/Addreses";
 import Modal from "../../components/ui/modal/Modal";
@@ -14,64 +12,121 @@ import PromotionCard from "../../components/promotionCard/PromotionCard";
 import { useMutation } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import Images from "../../components/promotionPublicationPage/images/Images";
+import { useAppDispatch } from "../../store/store";
+import {
+  setErrorNotification,
+  setNotification,
+} from "../../store/slices/notificationSlice";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers";
+import Company from "../../components/promotionPublicationPage/company/Company";
+import Loading from "../../components/ui/loading/Loading";
+import basketIcon from "../../assets/images/icons/basket.svg";
+import { useProfile } from "../../hooks/useProfile";
+import { useNavigate } from "react-router-dom";
 
 const getPercentFromNumber = (firstNumber: number, secondNumber: number) =>
   Math.floor((firstNumber / secondNumber) * 100);
 
+const promotionTypes = {
+  Скидка: "Discount",
+  Бонус: "Bonus",
+  Сертификат: "Certificate",
+  Розыгрыш: "Draw",
+};
+
 const PromotionPublicationPage: FC = memo(() => {
   const {
-    register,
-    formState: { errors, isValid },
-    setValue,
+    reset,
     watch,
+    register,
+    setValue,
     handleSubmit,
-  } = useForm<IPromotionFields>({ mode: "all" });
-  const [images, setImages] = useState<ImageFile[] | null>(null);
-  const [categories, setCategories] = useState<number[]>([]);
-  const [isIndicateOldPrice, setIsIndicateOldPrice] = useState(false);
-  const [contacts, setContacts] = useState([""]);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-
-  const { mutate: publicate } = useMutation({
-    mutationFn: promotionService.create,
+    formState: { errors, isValid },
+  } = useForm<IPromotionFields>({
+    mode: "all",
   });
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [images, setImages] = useState<ImageFile[] | null>(null);
+  const [isIndicateOldPrice, setIsIndicateOldPrice] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [endDateTime, setEndDateTime] = useState<Dayjs | null>(null);
+
+  const { data: profile, status } = useProfile();
+
+  useEffect(() => {
+    if (status !== "pending" && !profile?.id) {
+      navigate("/");
+      dispatch(
+        setErrorNotification("Для текущей страницы требуется авторизация")
+      );
+    }
+  }, [profile, status]);
+
+  const { mutate: publicate, isPending } = useMutation({
+    mutationFn: promotionService.create,
+    onSuccess: () => {
+      dispatch(setNotification("Акция успешно добавлена!"));
+      reset();
+      setImages([]);
+      setEndDate(null);
+      setEndDateTime(null);
+    },
+    onError: (error: any) => {
+      dispatch(setErrorNotification(error.response.data?.[0]));
+    },
+  });
+
+  const onClickPublicate: SubmitHandler<IPromotionFields> = ({
+    type,
+    title,
+    slider_image,
+    price,
+    address,
+    oldPrice,
+    category,
+    description,
+    company,
+  }) => {
+    const form = new FormData();
+
+    form.append("title", title);
+    form.append("slider_image", slider_image!.file);
+    form.append("description", description);
+    form.append("new_price", price + "");
+    form.append(
+      "end_date",
+      `${dayjs(endDate).format("YYYY-MM-DD")}${
+        dayjs(endDateTime).isValid()
+          ? "T" + dayjs(endDateTime).format("HH:mm:ss")
+          : ""
+      }`
+    );
+    form.append("company", company + "");
+    images?.forEach((image, key) => {
+      form.append(`upload_images[${key}]`, image.file);
+    });
+
+    category && form.append("category", category + "");
+    type && form.append("type", promotionTypes[type]);
+    oldPrice && form.append("old_price", oldPrice + "");
+    address && form.append("address", address);
+
+    publicate(form);
+  };
 
   const setAddress = (value: string) => {
     setValue("address", value);
   };
 
-  const onClickPublicate: SubmitHandler<IPromotionFields> = ({
-    title,
-    description,
-    price,
-    oldPrice,
-    endDate,
-    address,
-  }) => {
-    const form = new FormData();
-
-    form.append("title", title);
-    form.append("description", description);
-    form.append("new_price", price + "");
-    form.append("end_date", endDate);
-    form.append("company", "1");
-    images?.forEach((image, key) => {
-      form.append(`upload_images[${key}]`, image);
-    });
-
-    oldPrice && form.append("old_price", oldPrice + "");
-    address && form.append("old_price", address);
-
-    publicate({
-      title,
-      description,
-      company: 1,
-      new_price: price,
-      end_date: endDate,
-      ...(oldPrice ? { old_price: oldPrice } : {}),
-      ...(address ? { address } : {}),
-    });
+  const onChangeSliderImage = ({
+    target: { files },
+  }: ChangeEvent<HTMLInputElement>) => {
+    const file = files![0];
+    setValue("slider_image", { file, imageUrl: URL.createObjectURL(file) });
   };
 
   return (
@@ -81,7 +136,7 @@ const PromotionPublicationPage: FC = memo(() => {
         <form
           id="publicate-promotion-form"
           onSubmit={(e) => e.preventDefault()}
-          className="pl-[16px] *:mt-40"
+          className={clsx("pl-[16px] *:mt-40", { "blur-sm": isPending })}
         >
           <div>
             <h3 className="mb-[8px] title-3">Заголовок</h3>
@@ -94,6 +149,36 @@ const PromotionPublicationPage: FC = memo(() => {
             />
           </div>
           <Images images={images} setImages={setImages} />
+          <div>
+            {watch("slider_image") && (
+              <button
+                onClick={() => setValue("slider_image", null)}
+                className="mb-20 relative rounded-[10px] w-[100px] h-[100px] flex justify-center items-center bg-cover bg-center bg-no-repeat overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:right-0 before:trans-def hover:before:bg-[rgba(210,50,50,0.57)] *:hover:opacity-100"
+                style={{
+                  backgroundImage: `url(${watch("slider_image.imageUrl")})`,
+                }}
+              >
+                <img
+                  alt="basket"
+                  src={basketIcon}
+                  className="w-[40px] h-[40px] opacity-0 trans-def"
+                />
+              </button>
+            )}
+            <label
+              htmlFor="promotion-slider-image"
+              className="box-btn block w-fit text-green"
+            >
+              Добавить фото для слайдера
+              <input
+                type="file"
+                className="hidden"
+                accept=".jpg, .jpeg, .png"
+                id="promotion-slider-image"
+                onChange={onChangeSliderImage}
+              />
+            </label>
+          </div>
           <div>
             <h3 className="mb-[8px] title-3">Описание</h3>
             <div
@@ -115,33 +200,31 @@ const PromotionPublicationPage: FC = memo(() => {
               {errors.description?.message}
             </span>
           </div>
-          <div>
-            <h3 className="mb-[8px] title-3">
-              Название компании (Не обязательно)
-            </h3>
-            <Input
-              {...register("companyName")}
-              placeholder="Введите название компании"
-              error={errors.companyName}
-            />
-          </div>
+          <Company
+            company={watch("company")}
+            setCompany={(value: number) => setValue("company", value)}
+          />
           <div>
             <h3 className="mb-[8px] title-3">Дата окончания</h3>
-            <Input
-              type="date"
-              error={errors.endDate}
-              {...register("endDate", {
-                required: "Дата окончания не должна быть пустым!",
-              })}
+            <DatePicker
+              label="Дата"
+              sx={pickerSx}
+              value={endDate}
+              onChange={(value) => setEndDate(value)}
+            />
+            <TimePicker
+              label="Часы"
+              views={["hours", "minutes", "seconds"]}
+              ampm={false}
+              sx={pickerSx}
+              value={endDateTime}
+              onChange={(value) => setEndDateTime(value)}
             />
           </div>
-          <button
-            onClick={() => setIsScheduleOpen(true)}
-            className="mt-20 box-btn text-green"
-          >
-            Добавить график работы
-          </button>
-          <Categories categories={categories} setCategories={setCategories} />
+          <Categories
+            category={watch("category")}
+            setCategory={(value: number) => setValue("category", value)}
+          />
           <div>
             <h3 className="mb-[8px] title-3">Тип акции</h3>
             {promotionsTypeData.map((type) => (
@@ -187,13 +270,8 @@ const PromotionPublicationPage: FC = memo(() => {
               <span>Указать старую цену (перечеркнуто)</span>
             </Radiobox>
           </div>
-          <Contacts contacts={contacts} setContacts={setContacts} />
           <Addreses address={watch("address")} setAddress={setAddress} />
         </form>
-        <Schedule
-          isOpen={isScheduleOpen}
-          close={() => setIsScheduleOpen(false)}
-        />
         <div className="mt-[87px] flex gap-[16px]">
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -202,7 +280,12 @@ const PromotionPublicationPage: FC = memo(() => {
             Предпросмотр
           </button>
           <button
-            disabled={!isValid}
+            disabled={
+              !isValid ||
+              !images?.length ||
+              !endDate ||
+              !watch("slider_image.file")
+            }
             onClick={handleSubmit(onClickPublicate)}
             className="btn rounded-[24px] py-[22px] flex-grow text-center"
           >
@@ -221,7 +304,9 @@ const PromotionPublicationPage: FC = memo(() => {
           title={watch("title")}
           new_price={watch("price")}
           old_price={watch("oldPrice")}
-          image={images?.[0]?.imageUrl || ""}
+          images={
+            images?.map((image) => ({ image: image.imageUrl })) as IImage[]
+          }
           discount={
             watch("oldPrice")
               ? getPercentFromNumber(watch("price"), watch("oldPrice"))
@@ -230,6 +315,7 @@ const PromotionPublicationPage: FC = memo(() => {
           likes={[]}
         />
       </Modal>
+      {isPending && <Loading className="!fixed" />}
     </>
   );
 });

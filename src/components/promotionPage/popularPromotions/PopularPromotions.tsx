@@ -1,12 +1,28 @@
 import { FC } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { promotionsData } from "../../../data/data";
 import PromotionCard from "../../promotionCard/PromotionCard";
 import arrowIcon from "../../../assets/images/icons/arrow-left-2.svg";
 import "swiper/css";
 import { Navigation } from "swiper/modules";
+import { useQuery } from "@tanstack/react-query";
+import promotionService from "../../../services/promotionService";
 
-const PopularPromotions: FC = () => {
+interface Props {
+  promotionId: number;
+}
+
+const PopularPromotions: FC<Props> = ({ promotionId }) => {
+  const { data: promotions } = useQuery({
+    queryKey: ["promotions"],
+    queryFn: () => promotionService.getAll(),
+    select: ({ data }) => ({
+      ...data,
+      results: data.results.filter((promotion) => promotion.id !== promotionId),
+    }),
+  });
+
+  if (!promotions?.results.length) return <></>;
+
   return (
     <div className="py-80 container-two">
       <h2 className="mb-40">Популярные акции</h2>
@@ -27,8 +43,8 @@ const PopularPromotions: FC = () => {
             nextEl: ".popular-promotions-slider .slider-next",
           }}
         >
-          {promotionsData.map((promotion) => (
-            <SwiperSlide key={promotion.name} className="max-w-[540px]">
+          {promotions?.results.map((promotion) => (
+            <SwiperSlide key={promotion.id} className="max-w-[540px]">
               <PromotionCard {...promotion} />
             </SwiperSlide>
           ))}

@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useRef } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import clsx from "clsx";
 import searchIcon from "../../assets/images/icons/search.svg";
 import { Link } from "react-router-dom";
@@ -6,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import Loading from "../ui/loading/Loading";
+import { debounce } from "@mui/material";
 
 interface Props {
   isSearchFocus: boolean;
@@ -13,14 +21,28 @@ interface Props {
 }
 
 const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
+  const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
-  const { data, isLoading } = useQuery({
+  const { data, refetch, isLoading } = useQuery({
     queryKey: ["promotions-search"],
-    queryFn: () => promotionService.getAll(),
+    queryFn: () => promotionService.getAll({ search }),
     select: ({ data }) => data,
+    enabled: false,
   });
 
   useClickOutside([searchRef], () => setIsSearchFocus(false));
+
+  const onSearchRequest = useCallback(
+    debounce(() => {
+      refetch();
+    }, 250),
+    []
+  );
+
+  const onChangeSearch = (value: string) => {
+    setSearch(value);
+    onSearchRequest();
+  };
 
   return (
     <div ref={searchRef} className="relative flex-[0_1_578px] z-[30]">
@@ -28,9 +50,11 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
         <img src={searchIcon} alt="search" />
         <input
           type="text"
+          value={search}
           placeholder="Поиск акций"
           onFocus={() => setIsSearchFocus(true)}
           className="w-full leading-[20px] placeholder:text-black"
+          onChange={({ target: { value } }) => onChangeSearch(value)}
         />
       </div>
       <div

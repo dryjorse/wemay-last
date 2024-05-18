@@ -1,11 +1,26 @@
 import { FC } from "react";
-import { promotionsData } from "../../data/data";
 import PromotionCatdTwo from "../../components/promotionCardTwo/PromotionCatdTwo";
 import plusIcon from "../../assets/images/icons/plus.svg";
 import { Link } from "react-router-dom";
+import { useMyPromotions } from "../../hooks/useMyPromotions";
+import { useMutation } from "@tanstack/react-query";
+import promotionService from "../../services/promotionService";
+import Loading from "../../components/ui/loading/Loading";
+import clsx from "clsx";
 
 const MyPromotionsPage: FC = () => {
-  const onClickDelete = () => {};
+  const { data: promotions, refetch, isLoading } = useMyPromotions();
+
+  const { mutate: deleteMy, isPending: isDeleteLoading } = useMutation({
+    mutationFn: promotionService.deleteMy,
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const onClickDelete = (id: number) => {
+    deleteMy(id);
+  };
 
   return (
     <div className="container pt-80 pb-[120px] max-w-[848px]">
@@ -19,14 +34,25 @@ const MyPromotionsPage: FC = () => {
           <span>Новая акция</span>
         </Link>
       </div>
-      <div className="mt-[32px] [&>:not(:last-child)]:mb-40">
-        {promotionsData.map((promotion) => (
-          <PromotionCatdTwo
-            key={promotion.name}
-            onClickDelete={onClickDelete}
-            {...promotion}
-          />
-        ))}
+      <div className="relative mt-[32px] ">
+        <div
+          className={clsx("[&>:not(:last-child)]:mb-40", {
+            "blur-sm": isDeleteLoading,
+          })}
+        >
+          {isLoading ? (
+            <Loading />
+          ) : (
+            promotions?.results.map((promotion) => (
+              <PromotionCatdTwo
+                key={promotion.id}
+                onClickDelete={onClickDelete}
+                {...promotion}
+              />
+            ))
+          )}
+        </div>
+        {isDeleteLoading && <Loading />}
       </div>
     </div>
   );

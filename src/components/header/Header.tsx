@@ -1,13 +1,10 @@
 import { FC, ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 import { textLimit } from "../../data/data";
-import { useMutation } from "@tanstack/react-query";
 import { IUser } from "../../types/types";
 import Burger from "../burger/Burger";
-import Auth from "../auth/Auth";
 import Modal from "../ui/modal/Modal";
 import Dropdown from "../ui/dropdown/Dropdown";
-import profileService from "../../services/profileService";
 import promotionsIcon from "../../assets/images/icons/promotion-ctg.svg";
 import finishSoonIcon from "../../assets/images/icons/finish-ctg.svg";
 import freeIcon from "../../assets/images/icons/free-ctg.svg";
@@ -24,11 +21,13 @@ import Categories from "../categories/Categories";
 import Search from "../search/Search";
 import avaIcon from "../../assets/images/icons/ava.svg";
 import Loading from "../ui/loading/Loading";
-import { deleteTokens } from "../../common/api.helpers";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../store/store";
-import { setIsAuth } from "../../store/slices/authSlice";
+import { RootState } from "../../store/store";
 import { useProfile } from "../../hooks/useProfile";
+import { useFavourites } from "../../hooks/useFavourites";
+import { useLikes } from "../../hooks/useLikes";
+import { useLogout } from "../../hooks/useLogout";
+import { useMyPromotions } from "../../hooks/useMyPromotions";
 import "swiper/css";
 
 interface IProfileDropdownProps {
@@ -37,14 +36,11 @@ interface IProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
-  const dispatch = useAppDispatch();
-  const { mutate: logout } = useMutation({
-    mutationFn: profileService.logout,
-    onSuccess: () => {
-      dispatch(setIsAuth(false));
-      deleteTokens();
-    },
-  });
+  const { data: likes } = useLikes();
+  const { data: favourites } = useFavourites();
+  const { data: myPromotions } = useMyPromotions();
+
+  const { mutate: logout } = useLogout();
 
   return (
     <Dropdown
@@ -74,7 +70,7 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
           >
             <img src={heartIcon} alt="heart" className="opacity-60" />
             <span>Любимые акции</span>
-            <span>4</span>
+            <span>{likes?.count || 0}</span>
           </Link>
           <Link
             to="/favourites"
@@ -82,7 +78,7 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
           >
             <img src={starIcon} alt="heart" className="opacity-60" />
             <span>Избранное</span>
-            <span>4</span>
+            <span>{favourites?.count || 0}</span>
           </Link>
           <Link
             to="/my-promotions"
@@ -94,7 +90,7 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
               className="opacity-60"
             />
             <span>Мои акции</span>
-            <span>0</span>
+            <span>{myPromotions?.count || 0}</span>
           </Link>
           <Link
             to="/profile"
@@ -118,8 +114,11 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
   );
 };
 
-const Header: FC = () => {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+interface IHeaderProps {
+  setIsAuthOpen: (value: boolean) => void;
+}
+
+const Header: FC<IHeaderProps> = ({ setIsAuthOpen }) => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isSearchFocus, setIsSearchFocus] = useState(false);
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
@@ -130,18 +129,27 @@ const Header: FC = () => {
       <header className="bg-gray">
         <div className="bg-gray relative z-[51]">
           <div className="py-20 flex gap-[24px] justify-center lt:hidden">
-            <button className="box-secondary border-[#9B51E0] py-[8px] px-[12px] flex items-center gap-[8px] text-[#9B51E0] text-14 font-semibold">
+            <Link
+              to="/promotions-daily"
+              className="box-secondary border-[#9B51E0] py-[8px] px-[12px] flex items-center gap-[8px] text-[#9B51E0] text-14 font-semibold"
+            >
               <img src={promotionsIcon} alt="promotion" />
               <span>Акции дня</span>
-            </button>
-            <button className="box-secondary border-[#B84040] py-[8px] px-[12px] flex items-center gap-[8px] text-[#B84040] text-14 font-semibold">
+            </Link>
+            <Link
+              to="/promotions-end-soon"
+              className="box-secondary border-[#B84040] py-[8px] px-[12px] flex items-center gap-[8px] text-[#B84040] text-14 font-semibold"
+            >
               <img src={finishSoonIcon} alt="finish-soon" />
               <span>Скоро заканчивается</span>
-            </button>
-            <button className="box-secondary border-[#00B856] py-[8px] px-[12px] flex items-center gap-[8px] text-[#00B856] text-14 font-semibold">
+            </Link>
+            <Link
+              to="/promotions-free"
+              className="box-secondary border-[#00B856] py-[8px] px-[12px] flex items-center gap-[8px] text-[#00B856] text-14 font-semibold"
+            >
               <img src={freeIcon} alt="free" />
               <span>Бесплатно</span>
-            </button>
+            </Link>
           </div>
           <div className="h-[1px] bg-[#DDD] lt:hidden"></div>
           <div className="hidden container pt-[22px] pb-[18px] justify-between items-center lt:flex">
@@ -203,7 +211,7 @@ const Header: FC = () => {
                       <img
                         alt="avatar"
                         src={profile.image || avaIcon}
-                        className="w-[40px] h-[40px]"
+                        className="w-[40px] h-[40px] rounded-circle"
                       />
                     </>
                   }
@@ -228,11 +236,6 @@ const Header: FC = () => {
           authOpen={() => setIsAuthOpen(true)}
         />
       </header>
-      <Auth
-        isOpen={isAuthOpen}
-        close={() => setIsAuthOpen(false)}
-        type="login"
-      />
     </>
   );
 };

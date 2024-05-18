@@ -31,7 +31,8 @@ const Slider: FC = () => {
             grabCursor
             speed={500}
             slidesPerView={1}
-            modules={[Autoplay, Navigation]}
+            spaceBetween={30}
+            // modules={[Autoplay, Navigation]}
             navigation={{
               prevEl: ".main .slider-prev",
               nextEl: ".main .slider-next",
@@ -42,9 +43,9 @@ const Slider: FC = () => {
             {data?.results?.map((promotion) => (
               <SwiperSlide
                 key={promotion.title}
-                className="flex justify-between items-center lt:flex-col"
+                  className="flex justify-between items-center lt:flex-col lt:gap-[20px]"
               >
-                <div className="flex-[0_1_490px] lt:px-20 lt:flex-auto lt:max-w-[595px] ">
+                <div className="flex-[0_1_490px] lt:px-20 lt:flex-auto lt:max-w-[595px] lt:order-[2]">
                   <h3 className="text-[48px] font-bold tb:text-[24px] overflow-ellipsis line-clamp-3">
                     {promotion.title}
                   </h3>
@@ -59,7 +60,11 @@ const Slider: FC = () => {
                   </Link>
                 </div>
                 <div className="bmb:mt-[152px] tb:max-w-[328px]">
-                  <img src={promotion.slider_image} alt="promotion-image" />
+                  <img
+                    src={promotion.slider_image}
+                    alt="promotion-image"
+                    className="h-[340px] object-contain lt:h-[190px]"
+                  />
                 </div>
               </SwiperSlide>
             ))}

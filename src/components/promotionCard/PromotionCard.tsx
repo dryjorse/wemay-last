@@ -2,11 +2,16 @@ import { FC, MouseEvent, useEffect, useState } from "react";
 import { IPromotionCard } from "../../types/types";
 import { Link } from "react-router-dom";
 import starIcon from "../../assets/images/icons/star.svg";
+import starYellowIcon from "../../assets/images/icons/star-yellow.svg";
 import likeIcon from "../../assets/images/icons/like.svg";
 import likedIcon from "../../assets/images/icons/liked.svg";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import promotionService from "../../services/promotionService";
-import profileService from "../../services/profileService";
+import { useProfile } from "../../hooks/useProfile";
+import { useFavourites } from "../../hooks/useFavourites";
+import { RootState, useAppDispatch } from "../../store/store";
+import { setIsAuthOpen } from "../../store/slices/authSlice";
+import { useSelector } from "react-redux";
+import { useLikePromotion } from "../../hooks/useLikePromotion";
+import { useAddToFavouritePromotion } from "../../hooks/useAddToFavouritePromotion";
 
 interface IPromotionCardProps extends IPromotionCard {
   disabled?: boolean;
@@ -19,32 +24,56 @@ const PromotionCard: FC<IPromotionCardProps> = ({
   new_price,
   discount,
   likes,
-  image,
+  images,
   disabled = false,
 }) => {
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    queryFn: () => profileService.getProfile(),
-    select: ({ data }) => data,
-  });
+  const dispatch = useAppDispatch();
   const [localLikes, setLocalLikes] = useState(likes || []);
+  const [localIsFavourite, setLocalIsFavourite] = useState(false);
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
 
-  const { mutate: like } = useMutation({
-    mutationFn: promotionService.like,
-  });
+  const { data: profile } = useProfile();
+  const { data: favourites } = useFavourites();
+
+  const { mutate: addToFavourite } = useAddToFavouritePromotion();
+
+  const { mutate: like } = useLikePromotion();
 
   useEffect(() => {
     likes && setLocalLikes(likes);
   }, [likes]);
 
+  useEffect(() => {
+    favourites?.results?.some((promotion) => promotion.id === id) &&
+      setLocalIsFavourite(true);
+  }, [favourites]);
+
   const onClickLike = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (!profile?.id) {
+      dispatch(setIsAuthOpen(true));
+      return;
+    }
+
     like(id);
     setLocalLikes((prev) =>
       prev.includes(profile?.id!)
         ? prev.filter((id) => id !== profile?.id)
         : [...prev, profile?.id!]
     );
+  };
+
+  const onClickFavourite = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (!profile?.id) {
+      dispatch(setIsAuthOpen(true));
+      return;
+    }
+
+    addToFavourite(id);
+    setLocalIsFavourite((prev) => !prev);
   };
 
   return (
@@ -54,12 +83,15 @@ const PromotionCard: FC<IPromotionCardProps> = ({
       onClick={(e) => disabled && e.preventDefault()}
     >
       <div
-        style={{ backgroundImage: `url(${image})` }}
+        style={{ backgroundImage: `url(${images?.[0]?.image})` }}
         className="rounded-[24px] pt-[16px] w-full h-[260px] bg-cover bg-no-repeat bg-center text-white lt:h-[370px] tb:h-[300px] stb:h-[260px] smb:h-[200px]"
       >
         <div className="h-full flex flex-col justify-between">
-          <button className="pr-[16px] self-end">
-            <img src={starIcon} alt="star" />
+          <button onClick={onClickFavourite} className="pr-[16px] self-end">
+            <img
+              alt="star"
+              src={isAuth && localIsFavourite ? starYellowIcon : starIcon}
+            />
           </button>
           <div className="flex justify-between">
             {discount ? (
@@ -71,11 +103,14 @@ const PromotionCard: FC<IPromotionCardProps> = ({
             )}
             <button
               onClick={onClickLike}
-              disabled={!profile?.id}
-              className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center disabled:pointer-events-none"
+              className="rounded-[24px_0_24px_0] py-[12px] px-[24px] bg-[linear-gradient(270deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0)_96.11%)] flex gap-[8px] items-center"
             >
               <img
-                src={localLikes.includes(profile?.id!) ? likedIcon : likeIcon}
+                src={
+                  isAuth && localLikes.includes(profile?.id!)
+                    ? likedIcon
+                    : likeIcon
+                }
                 alt="like"
               />
               <span className="font-medium">{localLikes?.length || 0}</span>

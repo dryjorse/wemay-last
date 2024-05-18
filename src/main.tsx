@@ -4,15 +4,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
-import "./index.css";
 import { setErrorNotification } from "./store/slices/notificationSlice.ts";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "./index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: 0 },
     mutations: {
-      onError: (error) => {
-        store.dispatch(setErrorNotification(error.message));
+      onError: (error: any) => {
+        const errors = error.response.data;
+        const errorMessage = errors?.message || errors[Object.keys(errors)[0]][0];
+        console.log(error)
+        store.dispatch(setErrorNotification(errorMessage || error.message));
       },
     },
   },
@@ -22,7 +27,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <App />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <App />
+        </LocalizationProvider>
       </Provider>
     </QueryClientProvider>
   </BrowserRouter>

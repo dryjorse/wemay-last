@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+.MuiMenuItem-root.Mui-selected,
+.MuiPickersDay-root.Mui-selected,
+.MuiPickersYear-yearButton.Mui-selected,
+.MuiPickersDay-root:active {
+  background-color: green !important;
+  color: white !important;
+}
+.MuiPickersYear-yearButton {
+  text-align: center;
+}
+.MuiButton-root {
+  color: green !important;
+}
+
 @layer base {
   * {
     @apply m-0 p-0 box-border;

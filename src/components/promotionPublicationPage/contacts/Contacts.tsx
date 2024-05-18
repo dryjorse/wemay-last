@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { ChangeEvent, Dispatch, FC } from "react";
 import crossIcon from "../../../assets/images/icons/cross.svg";
+import Input from "../../ui/input/Input";
 
 interface IContactsProps {
   contacts: string[];
@@ -47,12 +48,6 @@ const Contacts: FC<IContactsProps> = ({ contacts, setContacts }) => {
           )}
         </div>
       ))}
-      <button
-        onClick={() => setContacts((prev) => [...prev, ""])}
-        className="mt-[8px] ml-[16px] text-green font-bold"
-      >
-        Добавить ещё
-      </button>
     </div>
   );
 };

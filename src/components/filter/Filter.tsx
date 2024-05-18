@@ -37,6 +37,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
     queryKey: ["categories"],
     queryFn: () => categoryService.getAll(),
     select: ({ data }) => data,
+    enabled: false
   });
 
   useEffect(() => {
@@ -101,6 +102,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
     dispatch(setPromotionTypes(promotionTypesT));
     dispatch(setDiscountPercentage(discountPercentageT));
     dispatch(setSort(sortValueT));
+    close()
   };
 
   return (
@@ -121,7 +123,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
           <div
             onClick={(e) => e.stopPropagation()}
             className={clsx(
-              "pt-[16px] pb-[24px] px-[16px] max-w-[540px] w-full bg-white h-screen overflow-y-scroll scroll-hidden",
+              "pt-[16px] pb-70 px-[16px] max-w-[540px] w-full bg-white h-screen overflow-y-scroll scroll-hidden",
               {
                 "animate-[open-filter_0.5s_forwards]": state === "entering",
                 "animate-[open-filter_0.5s_forwards_reverse]":

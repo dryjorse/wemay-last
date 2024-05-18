@@ -30,7 +30,6 @@ const Checkbox: FC<ICheckboxProps> = ({
           className="peer hidden"
           checked={checked}
           onChange={onChange}
-          form="publicate-promotion-form"
         />
         <img
           src={checkedIcon}

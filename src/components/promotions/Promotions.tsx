@@ -13,6 +13,8 @@ import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import Loading from "../ui/loading/Loading";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 const typesSlug: { [key: string]: string } = {
   Скидка: "Discount",
@@ -26,9 +28,7 @@ interface IPromotions {
   title?: string;
   style?: string;
   companyName?: string;
-  categoryName?: string;
-  type?: string;
-  discount?: string;
+  promotionsType?: "daily" | "endSoon" | "free";
 }
 
 const Promotions: FC<IPromotions> = ({
@@ -36,33 +36,57 @@ const Promotions: FC<IPromotions> = ({
   title = "Все акции",
   style = "",
   companyName = "",
-  categoryName = "",
-  type = "",
-  discount = "",
+  promotionsType,
 }) => {
+  const { categories, promotionTypes, discountPercentage, sortValue } =
+    useSelector((state: RootState) => state.filter);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(6);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const isTabler: boolean = useMatchMedia("(max-width: 768px)");
+  const categoryName = categories[0];
+  const discount = discountPercentage + "";
+  const type = typesSlug[promotionTypes[0]];
+
+  const params = {
+    page,
+    page_size: limit,
+    company__name: companyName,
+    category__title: categoryName,
+    type,
+    ...(+discount ? { min_discount: discount } : {}),
+    ...(promotionsType === "daily" ? { is_daily: true } : {}),
+    ...(sortValue === "Самые популярные"
+      ? { popular: "likes" }
+      : sortValue === "Сначала новые"
+      ? { new: true }
+      : sortValue === "По цене (высокая-низкая)"
+      ? { highest_price: "new_price" }
+      : sortValue === "По цене (низкая-высокая)"
+      ? { lowest_price: "new_price" }
+      : {}),
+  };
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["promotions"],
     queryFn: () =>
-      promotionService.getAll({
-        page,
-        page_size: limit,
-        company__name: companyName,
-        category__title: categoryName,
-        type: typesSlug[type],
-        ...(+discount ? { discount } : {}),
-      }),
+      promotionService[
+        promotionsType === "endSoon"
+          ? "getEndSoon"
+          : promotionsType === "free"
+          ? "getFree"
+          : "getAll"
+      ](params),
     select: ({ data }) => data,
+    enabled: false,
   });
+
+  console.log(sortValue);
 
   useEffect(() => {
     refetch();
-  }, [page, limit, categoryName, companyName, type, discount]);
+  }, [page, limit, categoryName, companyName, type, discount, sortValue]);
 
   const showMore = () => {
     setLimit((prev) => prev * 2);

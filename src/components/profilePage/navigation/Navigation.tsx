@@ -1,12 +1,31 @@
 import { FC, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { profileLinks } from "../../../data/data";
 import clsx from "clsx";
 import Modal from "../../ui/modal/Modal";
 import Dropdown from "../../ui/dropdown/Dropdown";
+import { useMutation } from "@tanstack/react-query";
+import authService from "../../../services/authService";
+import { useAppDispatch } from "../../../store/store";
+import { setNotification } from "../../../store/slices/notificationSlice";
+import { deleteTokens } from "../../../common/api.helpers";
+import { setIsAuth } from "../../../store/slices/authSlice";
+import arrowIcon from "../../../assets/images/icons/arrow-down.svg";
 
 const Navigation: FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isExitOpen, setIsExitOpen] = useState(false);
+
+  const { mutate: logout } = useMutation({
+    mutationFn: authService.logout,
+    onSuccess: () => {
+      navigate("/");
+      deleteTokens();
+      dispatch(setIsAuth(false));
+      dispatch(setNotification("Вы успешно вышли из аккаунта!"));
+    },
+  });
 
   return (
     <>
@@ -36,8 +55,25 @@ const Navigation: FC = () => {
             Выход
           </button>
         </div>
-        <Dropdown head={<div className="">Изменить профиль</div>} className="hidden lt:block" />
+        <div className="hidden lt:flex justify-between items-center">
+          <span>Изменить профиль</span>
+          <img src={arrowIcon} alt="arrow-down" />
+        </div>
       </nav>
+      <div className="hidden lt:block rounded-[8px] bg-white">
+        {profileLinks.map((link) => (
+          <NavLink
+            key={link.link}
+            to={link.link}
+            end={link.isEnd}
+            className={({ isActive }) =>
+              clsx("px-[24px] py-[28px] block", { "text-green": isActive })
+            }
+          >
+            {link.label}
+          </NavLink>
+        ))}
+      </div>
       <Modal
         isOpen={isExitOpen}
         close={() => setIsExitOpen(false)}
@@ -55,7 +91,10 @@ const Navigation: FC = () => {
           >
             Отмена
           </button>
-          <button className="btn rounded-[24px] py-[22px] w-[252px]">
+          <button
+            onClick={() => logout()}
+            className="btn rounded-[24px] py-[22px] w-[252px]"
+          >
             Выйти
           </button>
         </div>

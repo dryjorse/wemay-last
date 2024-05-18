@@ -32,6 +32,7 @@ import geoMarkerIcon from "../assets/images/icons/geo-marker.svg";
 import geoMarkerSelectedIcon from "../assets/images/icons/geo-marker-selected.svg";
 import avaImage from "../assets/images/term/ava.png";
 import { Icon } from "leaflet";
+import dayjs from "dayjs";
 
 export const customMarkerIcon = (isActive: boolean = false) =>
   new Icon({
@@ -41,6 +42,26 @@ export const customMarkerIcon = (isActive: boolean = false) =>
 
 export const textLimit = (text: string, limit: number) => {
   return text.length > limit ? text.slice(0, limit - 3) + "..." : text;
+};
+
+export const pickerSx = {
+  width: "100%",
+  marginTop: "15px",
+  "&.MuiButtonBase-root": { backgroundColor: "green" },
+  "& .MuiFormLabel-root": {
+    transform: "translate(16px, 12px) scale(1)",
+    "&.Mui-focused": {
+      color: "green",
+    },
+    "&.Mui-focused, &.MuiFormLabel-filled": {
+      transform: "translate(14px, -9px) scale(0.75)",
+    },
+  },
+  "& .MuiInputBase-root": {
+    borderRadius: "24px",
+    "& input": { padding: "12px 16px" },
+    "&.Mui-focused fieldset": { borderColor: "green" },
+  },
 };
 
 export const profileLinks = [
@@ -291,43 +312,43 @@ export const sortData = [
 ];
 
 export const initialScheduleTime = {
-  from: "09:00",
-  to: "18:00",
+  from: dayjs().set("hour", 9).set("minutes", 0),
+  to: dayjs().set("hour", 9).set("minutes", 0),
 };
 
 export const weekDays = [
   {
-    day: "Понедельник",
+    day: { value: "monday", label: "Понедельник" },
     isActive: true,
     time: initialScheduleTime,
   },
   {
-    day: "Вторник",
+    day: { value: "tuesday", label: "Вторник" },
     isActive: true,
     time: initialScheduleTime,
   },
   {
-    day: "Среда",
+    day: { value: "wednesday", label: "Среда" },
     isActive: true,
     time: initialScheduleTime,
   },
   {
-    day: "Четверг",
+    day: { value: "thursday", label: "Четверг" },
     isActive: true,
     time: initialScheduleTime,
   },
   {
-    day: "Пятница",
+    day: { value: "friday", label: "Пятница" },
     isActive: true,
     time: initialScheduleTime,
   },
   {
-    day: "Суббота",
+    day: { value: "saturday", label: "Суббота" },
     isActive: false,
     time: initialScheduleTime,
   },
   {
-    day: "Воскресенье",
+    day: { value: "sunday", label: "Воскресенье" },
     isActive: false,
     time: initialScheduleTime,
   },

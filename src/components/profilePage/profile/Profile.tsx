@@ -1,41 +1,73 @@
-import { ChangeEvent, FC, useState } from "react";
-import avaImage from "../../../assets/images/term/ava.png";
+import { ChangeEvent, FC } from "react";
 import Input from "../../ui/input/Input";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useProfile } from "../../../hooks/useProfile";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { IProfileFields } from "../../../types/types";
+import avaIcon from "../../../assets/images/icons/ava.svg";
+import { useMutation } from "@tanstack/react-query";
 import profileService from "../../../services/profileService";
 
 const Profile: FC = () => {
-  const queryClient = useQueryClient();
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    // queryFn: () => profileService.getProfile(),
-    // select: ({ data }) => data,
-    // enabled: !!localStorage.getItem("token"),
+  const { data: profile } = useProfile();
+  const {
+    watch,
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<IProfileFields>({
+    mode: "onBlur",
+    values: {
+      image: null,
+      email: profile?.email || "",
+      fullname: profile?.fullname || "",
+      username: profile?.username || "",
+    },
   });
-  const [currentAva, setCurrentAva] = useState(avaImage);
-  const fileReader = new FileReader();
-  fileReader.onloadend = () => {
-    typeof fileReader.result === "string" && setCurrentAva(fileReader.result);
+
+  const { mutate: changeProfile } = useMutation({
+    mutationFn: profileService.changeProfile,
+  });
+
+  const onClickSend: SubmitHandler<IProfileFields> = (body) => {
+    changeProfile({
+      email: body.email,
+      username: body.username,
+      fullname: body.fullname,
+    });
   };
 
-
-  const onChangeAva = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      const file = e.target.files[0];
-      fileReader.readAsDataURL(file);
-    }
+  const onChangeAva = ({
+    target: { files },
+  }: ChangeEvent<HTMLInputElement>) => {
+    setValue("image", {
+      file: files![0],
+      imageUrl: URL.createObjectURL(files![0]),
+    });
   };
+
+  const onDeleteAva = () => {
+    setValue("image", null);
+  };
+
+  const isBtnDisabled = !!(
+    !isValid ||
+    (watch("email") === profile?.email &&
+      watch("fullname") === profile.fullname &&
+      watch("username") &&
+      profile.username)
+  );
 
   return (
     <>
-      <div className="mb-40 flex gap-[40px] items-center">
+      <div className="mb-40 flex gap-[40px] items-center tb:flex-col">
         <img
           alt="ava"
-          src={currentAva}
+          src={watch("image")?.imageUrl || avaIcon}
           className="w-[100px] h-[100px] rounded-[50%]"
         />
         <div>
-          <div className="mb-[8px] flex gap-[16px]">
+          <div className="mb-[8px] flex gap-[16px] tb:flex-col">
             <label
               htmlFor="profile-ava"
               className="btn rounded-[24px] py-[12px] px-[24px] text-18 leading-[23px] cursor-pointer"
@@ -49,7 +81,10 @@ const Profile: FC = () => {
                 onChange={onChangeAva}
               />
             </label>
-            <button className="btn border border-green rounded-[24px] py-[12px] px-[24px] bg-transparent text-green">
+            <button
+              onClick={onDeleteAva}
+              className="btn border border-green rounded-[24px] py-[12px] px-[24px] bg-transparent text-green"
+            >
               Удалить
             </button>
           </div>
@@ -62,21 +97,36 @@ const Profile: FC = () => {
         <h2 className="mb-[8px] text-18 font-montserrat text-[rgba(83,83,84,1)]">
           Имя
         </h2>
-        <Input inputClassName="max-w-[700px]" />
+        <Input inputClassName="max-w-[700px]" {...register("fullname")} />
       </div>
       <div className="mt-40">
         <h2 className="mb-[8px] text-18 font-montserrat text-[rgba(83,83,84,1)]">
           Логин
         </h2>
-        <Input inputClassName="max-w-[700px]" />
+        <Input inputClassName="max-w-[700px]" {...register("username")} />
       </div>
       <div className="mt-40">
         <h2 className="mb-[8px] text-18 font-montserrat text-[rgba(83,83,84,1)]">
           Почта
         </h2>
-        <Input inputClassName="max-w-[700px]" />
+        <Input
+          error={errors.email}
+          inputClassName="max-w-[700px]"
+          {...register("email", {
+            required: {
+              value: true,
+              message: "Поле обязательно для заполнения",
+            },
+          })}
+        />
       </div>
-      <button className="btn mt-40">Сохранить</button>
+      <button
+        className="btn mt-40 tb:block tb:mx-auto"
+        disabled={isBtnDisabled}
+        onClick={handleSubmit(onClickSend)}
+      >
+        Сохранить
+      </button>
     </>
   );
 };

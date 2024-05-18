@@ -15,7 +15,7 @@ const Images: FC<Props> = ({ images, setImages }) => {
       const currentFile = e.target.files![i];
       setImages((prev) => [
         ...(prev || []),
-        { ...currentFile, imageUrl: URL.createObjectURL(currentFile) },
+        { file: currentFile, imageUrl: URL.createObjectURL(currentFile) },
       ]);
     }
   };
@@ -28,10 +28,10 @@ const Images: FC<Props> = ({ images, setImages }) => {
     <>
       <Swiper grabCursor slidesPerView="auto" spaceBetween={30}>
         {images?.map((image, key) => (
-          <SwiperSlide key={`${image.name}-${key}`} className="w-fit">
+          <SwiperSlide key={`${image.file.name}-${key}`} className="w-fit">
             <button
               onClick={() => onClickDeleteImage(key)}
-              className="relative rounded-[10px] w-[100px] h-[100px] flex justify-center items-center bg-cover bg-center bg-no-repeat overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:right-0 before:trans-def hover:before:bg-[rgba(0,0,0,0.5)] *:hover:opacity-100"
+              className="relative rounded-[10px] w-[100px] h-[100px] flex justify-center items-center bg-cover bg-center bg-no-repeat overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:right-0 before:trans-def hover:before:bg-[rgba(210,50,50,0.57)] *:hover:opacity-100"
               style={{
                 backgroundImage: `url(${image.imageUrl})`,
               }}
@@ -54,7 +54,6 @@ const Images: FC<Props> = ({ images, setImages }) => {
         Добавить фото
         <input
           onChange={onChangeImages}
-          // {...register("image")}
           multiple
           id="promotion-publication-image"
           type="file"

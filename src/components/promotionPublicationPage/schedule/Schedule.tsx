@@ -1,25 +1,29 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import { initialScheduleTime, weekDays } from "../../../data/data";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { initialScheduleTime, pickerSx, weekDays } from "../../../data/data";
 import Modal from "../../ui/modal/Modal";
 import Checkbox from "../../ui/checkbox/Checkbox";
 import Accordeon from "../../ui/accordeon/Accordeon";
 import arrowDownIcon from "../../../assets/images/icons/arrow-down.svg";
 import timeDelimiterIcon from "../../../assets/images/icons/time-delimiter.svg";
 import clsx from "clsx";
-import Input from "../../ui/input/Input";
-import clockIcon from "../../../assets/images/icons/clock.svg";
+import { TimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { IScheduleWeekDay } from "../../../types/types";
 
 interface IScheduleProps {
   isOpen: boolean;
   close: () => void;
+  setSchedule: Dispatch<SetStateAction<IScheduleWeekDay[] | null>>;
 }
 
 interface ITimeProps {
-  fromValue: string;
-  toValue: string;
-  onChangeFrom: (event: ChangeEvent<HTMLInputElement>) => void;
-  onChangeTo: (event: ChangeEvent<HTMLInputElement>) => void;
+  fromValue: dayjs.Dayjs;
+  toValue: dayjs.Dayjs;
+  onChangeFrom: (time: dayjs.Dayjs | null) => void;
+  onChangeTo: (time: dayjs.Dayjs | null) => void;
 }
+
+const timeFormat = (time: string) => (time.length > 1 ? time : `0${time}`);
 
 const Time: FC<ITimeProps> = ({
   fromValue,
@@ -33,30 +37,44 @@ const Time: FC<ITimeProps> = ({
         <h5 className="mb-[8px] text-18 font-bold text-[rgba(79,79,79,1)]">
           С
         </h5>
-        <Input
+        {/* <Input
           icon={clockIcon}
           value={fromValue}
           onChange={onChangeFrom}
           inputClassName="bg-white"
+        /> */}
+        <TimePicker
+          label="Часы"
+          ampm={false}
+          views={["hours", "minutes"]}
+          sx={{ ...pickerSx, marginTop: 0 }}
+          value={fromValue}
+          onChange={(value) => onChangeFrom(value)}
         />
       </div>
       <div>
         <h5 className="mb-[8px] text-18 font-bold text-[rgba(79,79,79,1)]">
           до
         </h5>
-        <Input
-          icon={clockIcon}
+        <TimePicker
+          label="Часы"
+          ampm={false}
+          views={["hours", "minutes"]}
+          sx={{ ...pickerSx, marginTop: 0 }}
           value={toValue}
-          onChange={onChangeTo}
-          inputClassName="bg-white"
+          onChange={(value) => onChangeTo(value)}
         />
       </div>
     </div>
   );
 };
 
-const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
-  const [schedule, setSchedule] = useState(weekDays);
+const Schedule: FC<IScheduleProps> = ({
+  isOpen,
+  close,
+  setSchedule: setScheduleGlobal,
+}) => {
+  const [schedule, setSchedule] = useState<IScheduleWeekDay[]>(weekDays);
   const [scheduleTime, setScheduleTime] = useState(initialScheduleTime);
 
   useEffect(() => {
@@ -75,20 +93,27 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
     setSchedule(customSchedule);
   };
 
-  const handleOnChangeTime = (value: string, fromOrTo: "from" | "to") => {
-    value.length <= 5 &&
-      setScheduleTime((prev) => ({ ...prev, [fromOrTo]: value }));
+  const handleOnChangeTime = (
+    value: dayjs.Dayjs | null,
+    fromOrTo: "from" | "to"
+  ) => {
+    setScheduleTime((prev) => ({ ...prev, [fromOrTo]: value }));
   };
 
   const handleOnChangeConcreteTime = (
-    value: string,
+    value: dayjs.Dayjs | null,
     index: number,
     fromOrTo: "from" | "to"
   ) => {
     const customSchedule = [...schedule];
-    if (value.length <= 5) customSchedule[index].time[fromOrTo] = value;
+    if (value) customSchedule[index].time[fromOrTo] = value;
 
     setSchedule(customSchedule);
+  };
+
+  const onClickAdd = () => {
+    setScheduleGlobal(schedule);
+    close();
   };
 
   return (
@@ -107,7 +132,7 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
         </h4>
         <ul className="pr-20 max-h-[386px] overflow-y-scroll overflow-x-hidden scroll-small">
           {schedule.map(({ day, isActive, time }, index) => (
-            <li key={day} className="mt-[17px]">
+            <li key={day.value} className="mt-[17px]">
               <Accordeon
                 isActive={isActive}
                 arrowIcon={arrowDownIcon}
@@ -117,8 +142,9 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
                 button={
                   <div className="flex-auto flex justify-between items-center">
                     <Checkbox
-                      name={day}
+                      name={day.label}
                       checked={isActive}
+                      // onClick={(e) => e.stopPropagation()}
                       onChange={() => handleIsDayActive(index)}
                     />
                     <div
@@ -129,9 +155,15 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
                         }
                       )}
                     >
-                      <span>{time.from}</span>
+                      <span>
+                        {timeFormat(dayjs(time.from).hour() + "")}:
+                        {timeFormat(dayjs(time.from).minute() + "")}
+                      </span>
                       <img src={timeDelimiterIcon} alt="time-delimiter" />
-                      <span>{time.to}</span>
+                      <span>
+                        {timeFormat(dayjs(time.to).hour() + "")}:
+                        {timeFormat(dayjs(time.to).minute() + "")}
+                      </span>
                     </div>
                   </div>
                 }
@@ -139,11 +171,11 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
                 <Time
                   fromValue={time.from}
                   toValue={time.to}
-                  onChangeFrom={(e) =>
-                    handleOnChangeConcreteTime(e.target.value, index, "from")
+                  onChangeFrom={(value) =>
+                    handleOnChangeConcreteTime(value, index, "from")
                   }
-                  onChangeTo={(e) =>
-                    handleOnChangeConcreteTime(e.target.value, index, "to")
+                  onChangeTo={(value) =>
+                    handleOnChangeConcreteTime(value, index, "to")
                   }
                 />
               </Accordeon>
@@ -157,8 +189,8 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
           <Time
             fromValue={scheduleTime.from}
             toValue={scheduleTime.to}
-            onChangeFrom={(e) => handleOnChangeTime(e.target.value, "from")}
-            onChangeTo={(e) => handleOnChangeTime(e.target.value, "to")}
+            onChangeFrom={(value) => handleOnChangeTime(value, "from")}
+            onChangeTo={(value) => handleOnChangeTime(value, "to")}
           />
         </div>
         <div className="flex gap-[16px] items-center text-18 *:font-bold">
@@ -168,7 +200,10 @@ const Schedule: FC<IScheduleProps> = ({ isOpen, close }) => {
           >
             Отмена
           </button>
-          <button className="btn rounded-[24px] py-[22px] px-[79px]">
+          <button
+            onClick={onClickAdd}
+            className="btn rounded-[24px] py-[22px] px-[79px]"
+          >
             Добавить
           </button>
         </div>

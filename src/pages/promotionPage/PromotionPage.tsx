@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useParams } from "react-router-dom";
-import { promotionsData, textLimit } from "../../data/data";
+import { textLimit } from "../../data/data";
 import Promotion from "../../components/promotionPage/promotion/Promotion";
 import Reviews from "../../components/promotionPage/reviews/Reviews";
 import PopularPromotions from "../../components/promotionPage/popularPromotions/PopularPromotions";
@@ -20,12 +20,17 @@ const PromotionPage: FC = () => {
   return (
     <>
       <div className="container-two pt-[52px] flex gap-[12px] items-center text-[14px]">
-        <span>Главная</span> <span>{">"}</span> <span>Категория</span>
+        <span>Главная</span>{" "}
+        {promotion.category_name && (
+          <>
+            <span>{">"}</span> <span>{promotion.category_name}</span>
+          </>
+        )}
         <span>{">"}</span> <span>{textLimit(promotion?.title, 21)}</span>
       </div>
       <Promotion {...promotion} />
-      {/* <Reviews reviews={promotion.reviews} /> */}
-      {/* <PopularPromotions /> */}
+      <Reviews promotionId={+(id || 0)} />
+      <PopularPromotions promotionId={+(id || 0)} />
     </>
   );
 };

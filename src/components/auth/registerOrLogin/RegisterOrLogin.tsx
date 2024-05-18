@@ -8,6 +8,8 @@ import Input from "../../ui/input/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AuthType, IAuthFields } from "../../../types/types";
 import { useAuth } from "../../../hooks/useAuth";
+import Loading from "../../ui/loading/Loading";
+import clsx from "clsx";
 
 interface Props {
   authType: "login" | "register";
@@ -26,16 +28,17 @@ const RegisterOrLogin: FC<Props> = ({ authType, setAuthType }) => {
   const { mutate: auth, isPending } = useAuth(
     authType,
     getValues("isRemember"),
-    () => {
-      setError("email", {
-        message: "Пользователь с таким email уже существует!",
-      });
+    (error) => {
+      console.log(error.response.data);
+      error.response.data.message === "User with this email already exists." &&
+        setError("email", {
+          message: "Пользователь с таким email уже существует!",
+        });
+
+      error.response.data.detail === "Неверные данные, попробуйте ещё раз!" &&
+        setError("root", { message: "Неверный email или пароль" });
     }
   );
-
-  const toggleAuthType = () => {
-    setAuthType((prev) => (prev === "login" ? "register" : "login"));
-  };
 
   const authFunc: SubmitHandler<IAuthFields> = (data) => {
     auth(data);
@@ -43,10 +46,14 @@ const RegisterOrLogin: FC<Props> = ({ authType, setAuthType }) => {
 
   return (
     <>
-      <h2 className="font-montserrat">
+      <h2 className="font-montserrat tb:text-[22px]">
         {authType === "login" ? "Войти" : "Зарегистрироваться"}
       </h2>
-      <form onSubmit={(e) => e.preventDefault()}>
+      {isPending && <Loading />}
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className={clsx("relative", { "blur-sm": isPending })}
+      >
         <div className="mt-[56px] mb-[32px]">
           <span className="text-14 text-[rgba(83,83,84,1)]">
             Введите Email<span className="text-red">*</span>
@@ -137,6 +144,11 @@ const RegisterOrLogin: FC<Props> = ({ authType, setAuthType }) => {
               </button>
             )}
           </div>
+          {errors.root && (
+            <span className="mt-10 text-red text-center block">
+              {errors.root.message}
+            </span>
+          )}
           <button
             onClick={handleSubmit(authFunc)}
             disabled={isPending || !isValid}
@@ -147,19 +159,20 @@ const RegisterOrLogin: FC<Props> = ({ authType, setAuthType }) => {
           <span className="block text-center text-14 leading-[19px] text-[rgba(51,51,51,1)]">
             {authType === "login" ? "Ещё нет аккаунта?" : "Есть аккаунт?"}{" "}
             <button
-              type="submit"
               className="text-blue"
-              onClick={toggleAuthType}
+              onClick={() =>
+                setAuthType(authType == "login" ? "register" : "login")
+              }
             >
               {authType === "login" ? "Зарегистрируйтесь" : "Войдите"}
             </button>
           </span>
-          <div className="mt-[32px] flex justify-between">
-            <button className="rounded-[24px] border border-[rgba(0,0,0,0.12)] py-[17px] pl-[38px] pr-[25px] flex gap-[9px] items-center text-[rgba(51,51,51,1)]">
+          <div className="mt-[32px] flex justify-between tb:flex-col tb:gap-[10px] tb:items-center">
+            <button className="rounded-[24px] border border-[rgba(0,0,0,0.12)] py-[17px] pl-[38px] pr-[25px] flex gap-[9px] items-center text-[rgba(51,51,51,1)] tb:w-fit">
               <img src={googleIcon} alt="google" />
               <span>Войти через Google</span>
             </button>
-            <button className="rounded-[24px] border border-[rgba(0,0,0,0.12)] py-[15px] pl-[26px] pr-[13px] flex gap-[9px] items-center text-[rgba(51,51,51,1)]">
+            <button className="rounded-[24px] border border-[rgba(0,0,0,0.12)] py-[15px] pl-[26px] pr-[13px] flex gap-[9px] items-center text-[rgba(51,51,51,1)] tb:w-fit">
               <div className="rounded-[30px] w-[30px] h-[30px] flex justify-center items-center bg-[linear-gradient(0deg,#0062E0_2.92%,#19AFFF_100%)]">
                 <img src={facebookIcon} alt="facebook" />
               </div>

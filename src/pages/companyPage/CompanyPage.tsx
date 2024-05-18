@@ -26,7 +26,7 @@ const CompanyPage: FC = () => {
       <section className="container pt-80 text-[rgba(51,51,51,1)]">
         <h1 className="title">Компания {data?.name}</h1>
         <div className="my-[64px] flex gap-[35px] items-center">
-          <img src={data?.image} alt="company-icon" />
+          <img src={data?.image} alt="company-icon" className="max-w-[200px] max-h-[190px] object-cover object-center" />
           <p className="text-18 leading-[23px]">{data?.description}</p>
         </div>
       </section>

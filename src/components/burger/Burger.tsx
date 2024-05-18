@@ -81,8 +81,7 @@ const Burger: FC<IBurgerProps> = ({ isOpen, close, authOpen }) => {
                     <button
                       key={link.label}
                       onClick={() => {
-                        state === "entered" && close();
-                        authOpen();
+                        state === "entered" && close(), authOpen();
                       }}
                       className="block w-full py-20 px-[24px] border-b border-[#D7D7D7]"
                     >

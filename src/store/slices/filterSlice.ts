@@ -1,10 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+type SortsType =
+  | "По умолчанию"
+  | "Сначала новые"
+  | "Самые популярные"
+  | "По цене (низкая-высокая)"
+  | "По цене (высокая-низкая)";
+
 interface IFilterSliceState {
   categories: string[];
   promotionTypes: string[];
   discountPercentage: number;
-  sortValue: string;
+  sortValue: SortsType;
 }
 
 const initialState: IFilterSliceState = {
@@ -27,7 +34,7 @@ const filterSlice = createSlice({
     setDiscountPercentage(state, action: PayloadAction<number>) {
       state.discountPercentage = action.payload;
     },
-    setSort(state, action: PayloadAction<string>) {
+    setSort(state, action: PayloadAction<SortsType>) {
       state.sortValue = action.payload;
     },
   },
