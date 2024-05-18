@@ -25,7 +25,7 @@ const Auth: FC<IAuthProps> = ({ isOpen, close, type = "register" }) => {
       isOpen={isOpen}
       close={close}
       modalStyle="z-[60]"
-      contentStyle="  pt-20 px-40 pb-[32px] w-[600px] w-full
+      contentStyle="  pt-20 px-40 pb-[32px] w-[600px]
        blt:pt-[16px] blt:pr-[36px] blt:pb-[28px] blt:pl-[36px] blt:w-[600px]
 lt:pt-[14px] lt:pr-[28px] lt:pb-[24px] lt:pl-[28px] lt:w-[500px]
 tb:pt-[12px] tb:pr-[24px] tb:pb-[20px] tb:pl-[24px] tb:w-[400px]
