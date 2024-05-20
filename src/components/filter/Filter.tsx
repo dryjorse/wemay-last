@@ -37,7 +37,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
     queryKey: ["categories"],
     queryFn: () => categoryService.getAll(),
     select: ({ data }) => data,
-    enabled: false
+    enabled: false,
   });
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
     dispatch(setPromotionTypes(promotionTypesT));
     dispatch(setDiscountPercentage(discountPercentageT));
     dispatch(setSort(sortValueT));
-    close()
+    close();
   };
 
   return (
@@ -289,6 +289,7 @@ const Filter: FC<IFilterProps> = ({ isOpen, close }) => {
                   {sortData.map((sort) => (
                     <button
                       key={sort.label}
+                      // @ts-ignore
                       onClick={() => setSortValueT(sort.label)}
                       className={clsx(
                         "mb-[8px] rounded-[200px] px-[16px] py-[6px] flex justify-between items-center w-fit h-[36px] bg-gray text-[18px] leading-[24px] font-medium trans-def",
