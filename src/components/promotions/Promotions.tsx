@@ -77,6 +77,7 @@ const Promotions: FC<IPromotions> = ({
           : promotionsType === "free"
           ? "getFree"
           : "getAll"
+          // @ts-ignoret
       ](params),
     select: ({ data }) => data,
     enabled: false,

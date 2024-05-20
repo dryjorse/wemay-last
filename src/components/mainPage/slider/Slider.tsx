@@ -32,7 +32,7 @@ const Slider: FC = () => {
             speed={500}
             slidesPerView={1}
             spaceBetween={30}
-            // modules={[Autoplay, Navigation]}
+            modules={[Autoplay, Navigation]}
             navigation={{
               prevEl: ".main .slider-prev",
               nextEl: ".main .slider-next",
