@@ -3,7 +3,7 @@ import { routes } from "./routes/routes";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import { useProfile } from "./hooks/useProfile";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { RootState, useAppDispatch } from "./store/store";
 import { setIsAuth, setIsAuthOpen } from "./store/slices/authSlice";
 import Notification from "./components/ui/notification/Notification";

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 const ProfilePage: FC = () => {
-  const { data: profile, status } = useProfile();
+  const { data: profile } = useProfile();
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
 
 

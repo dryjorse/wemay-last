@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ICompany, ICompanyCard } from "../../types/types";
+import {  ICompanyCard } from "../../types/types";
 import { Link } from "react-router-dom";
 
 const CompanyCard: FC<ICompanyCard> = ({

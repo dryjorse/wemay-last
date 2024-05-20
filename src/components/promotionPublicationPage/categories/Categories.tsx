@@ -1,6 +1,6 @@
 import { FC } from "react";
-import checkedIcon from "../../../assets/images/icons/checked.svg";
-import checkedWrapperIcon from "../../../assets/images/icons/checked-wrapper.svg";
+// import checkedIcon from "../../../assets/images/icons/checked.svg";
+// import checkedWrapperIcon from "../../../assets/images/icons/checked-wrapper.svg";
 import Select from "../../ui/select/Select";
 import categoryService from "../../../services/categoryService";
 import { useQuery } from "@tanstack/react-query";

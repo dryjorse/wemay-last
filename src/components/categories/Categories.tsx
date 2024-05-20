@@ -1,5 +1,4 @@
 import { FC } from "react";
-import smallArrowDownIcon from "../../assets/images/icons/small-arrow-down.svg";
 import arrowLeftIcon from "../../assets/images/icons/arrow-left.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";

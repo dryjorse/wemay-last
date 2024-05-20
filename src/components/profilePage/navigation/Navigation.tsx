@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { profileLinks } from "../../../data/data";
 import clsx from "clsx";
 import Modal from "../../ui/modal/Modal";
-import Dropdown from "../../ui/dropdown/Dropdown";
 import { useMutation } from "@tanstack/react-query";
 import authService from "../../../services/authService";
 import { useAppDispatch } from "../../../store/store";

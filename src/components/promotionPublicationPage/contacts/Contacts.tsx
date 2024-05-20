@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ChangeEvent, Dispatch, FC } from "react";
 import crossIcon from "../../../assets/images/icons/cross.svg";
-import Input from "../../ui/input/Input";
+// import Input from "../../ui/input/Input";
 
 interface IContactsProps {
   contacts: string[];
