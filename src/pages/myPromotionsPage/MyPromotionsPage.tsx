@@ -7,8 +7,10 @@ import { useMutation } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import Loading from "../../components/ui/loading/Loading";
 import clsx from "clsx";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const MyPromotionsPage: FC = () => {
+  useClearCategory();
   const { data: promotions, refetch, isLoading } = useMyPromotions();
 
   const { mutate: deleteMy, isPending: isDeleteLoading } = useMutation({

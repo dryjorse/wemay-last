@@ -6,11 +6,12 @@ import ava from "../../assets/images/icons/ava.svg";
 import { useProfile } from "../../hooks/useProfile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const ProfilePage: FC = () => {
+  useClearCategory();
   const { data: profile } = useProfile();
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
-
 
   if (!isAuth && !profile?.id) return <Navigate to="/" />;
 

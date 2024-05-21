@@ -5,8 +5,11 @@ import telegramIcon from "../../assets/images/icons/telegram.svg";
 import whatsappIcon from "../../assets/images/icons/whatsapp.svg";
 import vkIcon from "../../assets/images/icons/vk.svg";
 import facebookIcon from "../../assets/images/icons/facebook.svg";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const AboutPage: FC = () => {
+  useClearCategory();
+
   return (
     <section>
       <div

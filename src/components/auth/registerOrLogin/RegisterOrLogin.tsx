@@ -29,7 +29,6 @@ const RegisterOrLogin: FC<Props> = ({ authType, setAuthType }) => {
     authType,
     getValues("isRemember"),
     (error) => {
-      console.log(error.response.data);
       error.response.data.message === "User with this email already exists." &&
         setError("email", {
           message: "Пользователь с таким email уже существует!",

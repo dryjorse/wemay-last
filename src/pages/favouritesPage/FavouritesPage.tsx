@@ -3,8 +3,10 @@ import starGreenIcon from "../../assets/images/icons/star-green.svg";
 import PromotionCatdTwo from "../../components/promotionCardTwo/PromotionCatdTwo";
 import { useFavourites } from "../../hooks/useFavourites";
 import { useAddToFavouritePromotion } from "../../hooks/useAddToFavouritePromotion";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const FavouritesPage: FC = () => {
+  useClearCategory();
   const { data: promotions } = useFavourites();
 
   const { mutate: addToFavourite } = useAddToFavouritePromotion();

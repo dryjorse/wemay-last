@@ -4,9 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import companiesService from "../../services/companiesService";
 import Loading from "../../components/ui/loading/Loading";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const CompanyPage: FC = () => {
   const { id } = useParams();
+  useClearCategory();
 
   const { data, isLoading } = useQuery({
     queryKey: ["companies", id],
@@ -26,7 +28,11 @@ const CompanyPage: FC = () => {
       <section className="container pt-80 text-[rgba(51,51,51,1)]">
         <h1 className="title">Компания {data?.name}</h1>
         <div className="my-[64px] flex gap-[35px] items-center">
-          <img src={data?.image} alt="company-icon" className="max-w-[200px] max-h-[190px] object-cover object-center" />
+          <img
+            src={data?.image}
+            alt="company-icon"
+            className="max-w-[200px] max-h-[190px] object-cover object-center"
+          />
           <p className="text-18 leading-[23px]">{data?.description}</p>
         </div>
       </section>

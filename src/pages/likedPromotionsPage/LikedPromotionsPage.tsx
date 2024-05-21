@@ -3,8 +3,10 @@ import PromotionCatdTwo from "../../components/promotionCardTwo/PromotionCatdTwo
 import heartIcon from "../../assets/images/icons/heart.svg";
 import { useLikes } from "../../hooks/useLikes";
 import { useLikePromotion } from "../../hooks/useLikePromotion";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const LikedPromotionsPage: FC = () => {
+  useClearCategory();
   const { data: promotions } = useLikes();
 
   const { mutate: like } = useLikePromotion();

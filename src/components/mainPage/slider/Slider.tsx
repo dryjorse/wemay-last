@@ -7,6 +7,7 @@ import promotionService from "../../../services/promotionService";
 import { Link } from "react-router-dom";
 import Loading from "../../ui/loading/Loading";
 import "swiper/css";
+import clsx from "clsx";
 
 const Slider: FC = () => {
   const { data, isLoading } = useQuery({
@@ -18,7 +19,12 @@ const Slider: FC = () => {
   return (
     <section className="container main mt-[32px] max-w-[1377px]">
       <div className="rounded-[48px] py-[125px] h-[508px] flex items-center bg-gray lt:py-40 lt:h-auto">
-        <button className="pl-[24px] h-full flex-shrink-0 slider-prev tb:pl-0">
+        <button
+          className={clsx(
+            "pl-[24px] h-full flex-shrink-0 slider-prev tb:pl-0",
+            { hidden: (data?.results.length || 0) <= 1 }
+          )}
+        >
           <img src={arrowLeftIcon} alt="arrow-left" />
         </button>
         {isLoading ? (
@@ -27,23 +33,25 @@ const Slider: FC = () => {
           </div>
         ) : (
           <Swiper
-            loop
             grabCursor
             speed={500}
             slidesPerView={1}
             spaceBetween={30}
             modules={[Autoplay, Navigation]}
+            loop={(data?.results.length || 0) > 1}
             navigation={{
               prevEl: ".main .slider-prev",
               nextEl: ".main .slider-next",
             }}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
-            className="mx-[62px] w-full lt:mx-0"
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            className={clsx("mx-[62px] w-full lt:mx-0", {
+              "mx-90": (data?.results.length || 0) <= 1,
+            })}
           >
             {data?.results?.map((promotion) => (
               <SwiperSlide
                 key={promotion.title}
-                  className="flex justify-between items-center lt:flex-col lt:gap-[20px]"
+                className="flex justify-between items-center lt:flex-col lt:gap-[20px]"
               >
                 <div className="flex-[0_1_490px] lt:px-20 lt:flex-auto lt:max-w-[595px] lt:order-[2]">
                   <h3 className="text-[48px] font-bold tb:text-[24px] overflow-ellipsis line-clamp-3">
@@ -70,7 +78,12 @@ const Slider: FC = () => {
             ))}
           </Swiper>
         )}
-        <button className="pr-[24px] h-full flex-shrink-0 slider-next tb:pr-0">
+        <button
+          className={clsx(
+            "pr-[24px] h-full flex-shrink-0 slider-next tb:pr-0",
+            { hidden: (data?.results.length || 0) <= 1 }
+          )}
+        >
           <img src={arrowLeftIcon} alt="arrow-left" className="rotate-180" />
         </button>
       </div>

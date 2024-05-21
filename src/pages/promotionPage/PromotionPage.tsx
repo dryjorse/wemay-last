@@ -6,8 +6,10 @@ import Reviews from "../../components/promotionPage/reviews/Reviews";
 import PopularPromotions from "../../components/promotionPage/popularPromotions/PopularPromotions";
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const PromotionPage: FC = () => {
+  useClearCategory();
   const { id } = useParams();
   const { data: promotion } = useQuery({
     queryKey: ["promotions", id],

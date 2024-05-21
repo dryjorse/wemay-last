@@ -17,6 +17,7 @@ import {
 } from "../../store/slices/notificationSlice";
 import Schedule from "../../components/promotionPublicationPage/schedule/Schedule";
 import { useNavigate } from "react-router-dom";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const AddCompanyPage: FC = () => {
   const {
@@ -33,6 +34,7 @@ const AddCompanyPage: FC = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [schedule, setSchedule] = useState<IScheduleWeekDay[] | null>(null);
+  useClearCategory();
 
   const { data: profile, status } = useProfile();
 

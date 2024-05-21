@@ -25,6 +25,7 @@ import Loading from "../../components/ui/loading/Loading";
 import basketIcon from "../../assets/images/icons/basket.svg";
 import { useProfile } from "../../hooks/useProfile";
 import { useNavigate } from "react-router-dom";
+import { useClearCategory } from "../../hooks/useClearCategory";
 
 const getPercentFromNumber = (firstNumber: number, secondNumber: number) =>
   Math.floor((firstNumber / secondNumber) * 100);
@@ -37,6 +38,7 @@ const promotionTypes = {
 };
 
 const PromotionPublicationPage: FC = memo(() => {
+  useClearCategory();
   const {
     reset,
     watch,

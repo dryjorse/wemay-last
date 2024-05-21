@@ -83,7 +83,6 @@ const Promotions: FC<IPromotions> = ({
     enabled: false,
   });
 
-  console.log(sortValue);
 
   useEffect(() => {
     refetch();

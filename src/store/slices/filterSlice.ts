@@ -37,6 +37,12 @@ const filterSlice = createSlice({
     setSort(state, action: PayloadAction<SortsType>) {
       state.sortValue = action.payload;
     },
+    clear(state) {
+      state.categories = [];
+      state.promotionTypes = [];
+      state.discountPercentage = 0;
+      state.sortValue = "По умолчанию";
+    },
   },
 });
 
@@ -45,5 +51,6 @@ export const {
   setPromotionTypes,
   setDiscountPercentage,
   setSort,
+  clear,
 } = filterSlice.actions;
 export default filterSlice.reducer;

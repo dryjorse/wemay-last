@@ -16,7 +16,6 @@ const queryClient = new QueryClient({
       onError: (error: any) => {
         const errors = error.response.data;
         const errorMessage = errors?.message || errors[Object.keys(errors)[0]][0];
-        console.log(error)
         store.dispatch(setErrorNotification(errorMessage || error.message));
       },
     },
