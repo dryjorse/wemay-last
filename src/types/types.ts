@@ -13,6 +13,10 @@ export interface ICompany {
   discounts: number;
   description: string;
   owner: string;
+  instagram: string;
+  facebook: string;
+  whatsapp: string;
+  website: string;
 }
 
 export type ICompanyCard = Pick<
@@ -165,7 +169,8 @@ export interface IValidationError {
 }
 
 export interface IProfileFields {
-  image: ImageFile | null;
+  image: File | null;
+  imageUrl: string;
   username: string;
   fullname: string;
   email: string;

@@ -80,11 +80,11 @@ const PromotionCatdTwo: FC<IPromotionCardTwoProps> = ({
       </div>
       <div className="flex-auto flex flex-col">
         <h3 className="text-grey font-semibold">{title}</h3>
-        <div className="mt-[16px] mb-auto flex gap-[12px] text-[20px] font-bold">
+        <div className="mt-[16px] mb-auto flex gap-[12px] text-[20px]">
           <span className="text-[rgba(130,130,130,1)] line-through">
             от {old_price} сом
           </span>
-          <span>от {new_price} сом</span>
+          <span className="font-bold">от {new_price} сом</span>
         </div>
         <button
           onClick={deleteFunc}

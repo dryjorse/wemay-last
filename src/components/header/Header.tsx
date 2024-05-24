@@ -53,7 +53,7 @@ const ProfileDropdown: FC<IProfileDropdownProps> = ({ head, profile }) => {
           <img
             alt="ava"
             src={profile.image || avaIcon}
-            className="w-[40px] h-[40px]"
+            className="w-[40px] h-[40px] rounded-circle object-cover object-center"
           />
           <h3 className="mt-[12px] mb-[6px] text-[rgba(51,51,51,1)] font-bold">
             {profile.fullname}
@@ -211,7 +211,7 @@ const Header: FC<IHeaderProps> = ({ setIsAuthOpen }) => {
                       <img
                         alt="avatar"
                         src={profile.image || avaIcon}
-                        className="w-[40px] h-[40px] rounded-circle"
+                        className="w-[40px] h-[40px] rounded-circle object-cover object-center"
                       />
                     </>
                   }

@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../../services/promotionService";
 import { Link } from "react-router-dom";
 import Loading from "../../ui/loading/Loading";
-import "swiper/css";
 import clsx from "clsx";
+import "swiper/css";
 
 const Slider: FC = () => {
   const { data, isLoading } = useQuery({

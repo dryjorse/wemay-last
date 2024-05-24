@@ -1,7 +1,7 @@
 import { FC } from "react";
 import PromotionCatdTwo from "../../components/promotionCardTwo/PromotionCatdTwo";
 import plusIcon from "../../assets/images/icons/plus.svg";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useMyPromotions } from "../../hooks/useMyPromotions";
 import { useMutation } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
@@ -11,7 +11,7 @@ import { useClearCategory } from "../../hooks/useClearCategory";
 
 const MyPromotionsPage: FC = () => {
   useClearCategory();
-  const { data: promotions, refetch, isLoading } = useMyPromotions();
+  const { data: promotions, refetch, isLoading, isError } = useMyPromotions();
 
   const { mutate: deleteMy, isPending: isDeleteLoading } = useMutation({
     mutationFn: promotionService.deleteMy,
@@ -23,6 +23,9 @@ const MyPromotionsPage: FC = () => {
   const onClickDelete = (id: number) => {
     deleteMy(id);
   };
+
+  if (!localStorage.getItem("wemay-access-token") || isError)
+    return <Navigate to="/" replace />;
 
   return (
     <div className="container pt-80 pb-[120px] max-w-[848px]">

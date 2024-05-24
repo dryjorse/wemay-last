@@ -6,9 +6,12 @@ import { IProfileFields } from "../../../types/types";
 import avaIcon from "../../../assets/images/icons/ava.svg";
 import { useMutation } from "@tanstack/react-query";
 import profileService from "../../../services/profileService";
+import { useAppDispatch } from "../../../store/store";
+import { setNotification } from "../../../store/slices/notificationSlice";
 
 const Profile: FC = () => {
-  const { data: profile } = useProfile();
+  const dispatch = useAppDispatch();
+  const { data: profile, refetch } = useProfile();
   const {
     watch,
     register,
@@ -18,41 +21,54 @@ const Profile: FC = () => {
   } = useForm<IProfileFields>({
     mode: "onBlur",
     values: {
-      image: null,
       email: profile?.email || "",
       fullname: profile?.fullname || "",
       username: profile?.username || "",
+      imageUrl: profile?.image || "",
+      image: null,
     },
   });
 
   const { mutate: changeProfile } = useMutation({
     mutationFn: profileService.changeProfile,
+    onSuccess: () => {
+      refetch();
+      dispatch(setNotification("Данные профиля успешно изменены!"));
+    },
   });
 
-  const onClickSend: SubmitHandler<IProfileFields> = (body) => {
-    changeProfile({
-      email: body.email,
-      username: body.username,
-      fullname: body.fullname,
-    });
+  const onClickSend: SubmitHandler<IProfileFields> = ({
+    email,
+    username,
+    fullname,
+    image,
+  }) => {
+    const form = new FormData();
+
+    form.append("email", email);
+    form.append("username", username);
+    form.append("fullname", fullname);
+    image && form.append("image", image);
+
+    changeProfile(form);
   };
 
   const onChangeAva = ({
     target: { files },
   }: ChangeEvent<HTMLInputElement>) => {
-    setValue("image", {
-      file: files![0],
-      imageUrl: URL.createObjectURL(files![0]),
-    });
+    setValue("image", files![0]);
+    setValue("imageUrl", URL.createObjectURL(files![0]));
   };
 
   const onDeleteAva = () => {
     setValue("image", null);
+    setValue("imageUrl", "");
   };
 
   const isBtnDisabled = !!(
     !isValid ||
-    (watch("email") === profile?.email &&
+    (watch("imageUrl") === profile?.image &&
+      watch("email") === profile?.email &&
       watch("fullname") === profile.fullname &&
       watch("username") &&
       profile.username)
@@ -63,8 +79,8 @@ const Profile: FC = () => {
       <div className="mb-40 flex gap-[40px] items-center tb:flex-col">
         <img
           alt="ava"
-          src={watch("image")?.imageUrl || avaIcon}
-          className="w-[100px] h-[100px] rounded-[50%]"
+          src={watch("imageUrl") || avaIcon}
+          className="w-[100px] h-[100px] rounded-[50%] object-cover object-center"
         />
         <div>
           <div className="mb-[8px] flex gap-[16px] tb:flex-col">

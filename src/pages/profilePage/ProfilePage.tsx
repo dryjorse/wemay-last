@@ -4,16 +4,14 @@ import { profileRoutes } from "../../routes/routes";
 import Navigation from "../../components/profilePage/navigation/Navigation";
 import ava from "../../assets/images/icons/ava.svg";
 import { useProfile } from "../../hooks/useProfile";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
 import { useClearCategory } from "../../hooks/useClearCategory";
 
 const ProfilePage: FC = () => {
   useClearCategory();
-  const { data: profile } = useProfile();
-  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+  const { data: profile, isError } = useProfile();
 
-  if (!isAuth && !profile?.id) return <Navigate to="/" />;
+  if (!localStorage.getItem("wemay-access-token") || isError)
+    return <Navigate to="/" replace />;
 
   return (
     <div className="pt-40 pb-100 bg-gray text-almost-black font-mulish">
@@ -22,7 +20,7 @@ const ProfilePage: FC = () => {
           <img
             alt="ava"
             src={profile?.image || ava}
-            className="w-[64px] h-[64px] rounded-[50%]"
+            className="w-[64px] h-[64px] rounded-[50%] object-cover object-center"
           />
           <div className="flex flex-col justify-between">
             <h1 className="text-[24px] font-bold font-montserrat">

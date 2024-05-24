@@ -15,6 +15,7 @@ const Navigation: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isExitOpen, setIsExitOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { mutate: logout } = useMutation({
     mutationFn: authService.logout,
@@ -54,25 +55,37 @@ const Navigation: FC = () => {
             Выход
           </button>
         </div>
-        <div className="hidden lt:flex justify-between items-center">
+        <div
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="hidden lt:flex justify-between items-center"
+        >
           <span>Изменить профиль</span>
-          <img src={arrowIcon} alt="arrow-down" />
+          <img
+            src={arrowIcon}
+            alt="arrow-down"
+            className={clsx("trans-def", { "rotate-180": isOpen })}
+          />
         </div>
       </nav>
-      <div className="hidden lt:block rounded-[8px] bg-white">
-        {profileLinks.map((link) => (
-          <NavLink
-            key={link.link}
-            to={link.link}
-            end={link.isEnd}
-            className={({ isActive }) =>
-              clsx("px-[24px] py-[28px] block", { "text-green": isActive })
-            }
-          >
-            {link.label}
-          </NavLink>
-        ))}
-      </div>
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="hidden lt:block rounded-[8px] bg-white"
+        >
+          {profileLinks.map((link) => (
+            <NavLink
+              to={link.link}
+              end={link.isEnd}
+              key={link.link}
+              className={({ isActive }) =>
+                clsx("px-[24px] py-[28px] block", { "text-green": isActive })
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
       <Modal
         isOpen={isExitOpen}
         close={() => setIsExitOpen(false)}

@@ -9,10 +9,10 @@ import likedIcon from "../../../assets/images/icons/liked.svg";
 import likeGreenIcon from "../../../assets/images/icons/like-green.svg";
 import timeIcon from "../../../assets/images/icons/time.svg";
 import telIcon from "../../../assets/images/icons/tel.svg";
-// import instagramIcon from "../../../assets/images/icons/instagram.svg";
-// import facebookIcon from "../../../assets/images/icons/facebook.svg";
-// import whatsappIcon from "../../../assets/images/icons/whatsapp.svg";
-// import websiteIcon from "../../../assets/images/icons/website.svg";
+import instagramIcon from "../../../assets/images/icons/instagram.svg";
+import facebookIcon from "../../../assets/images/icons/facebook.svg";
+import whatsappIcon from "../../../assets/images/icons/whatsapp.svg";
+import websiteIcon from "../../../assets/images/icons/website.svg";
 import crossIcon from "../../../assets/images/icons/cross.svg";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import mapService from "../../../services/mapService";
@@ -22,8 +22,8 @@ import { useAppDispatch } from "../../../store/store";
 import { setErrorNotification } from "../../../store/slices/notificationSlice";
 import clsx from "clsx";
 import { useProfile } from "../../../hooks/useProfile";
-import "swiper/css";
 import companiesService from "../../../services/companiesService";
+import "swiper/css";
 
 const daysFormat = {
   monday: "Пн",
@@ -64,6 +64,12 @@ const Promotion: FC<IPromotion> = ({
     queryFn: () => mapService.getByName(address),
     select: ({ data }) => data,
     enabled: !!address,
+  });
+
+  const { data: companyData } = useQuery({
+    queryKey: ["company", company],
+    queryFn: () => companiesService.getById(company),
+    select: ({ data }) => data,
   });
 
   const { data: contacts } = useQuery({
@@ -238,9 +244,9 @@ const Promotion: FC<IPromotion> = ({
         </div>
         <div className="rounded-[24px] p-[32px] bg-gray flex-[0_1_508px] font-mulish">
           {old_price && (
-            <span className="relative text-[24px]">
+            <span className="relative text-[24px] text-[rgba(130,130,130,1)]">
               от {old_price} сом{" "}
-              <div className="absolute top-[calc(50%+1px)] left-[-3px] w-full h-[1px] bg-black"></div>
+              <div className="absolute top-[calc(50%+1px)] left-[-3px] w-full h-[1px] bg-[rgba(130,130,130,1)]"></div>
             </span>
           )}
           <b
@@ -290,7 +296,7 @@ const Promotion: FC<IPromotion> = ({
               href={`tel:${tel.value}`}
               className="mt-[8px] block text-18 font-bold leading-[23px] font-montserrat"
             >
-              {tel.title}
+              +996 {tel.title}
             </a>
           ))}
           <div className="my-[21px] max-w-[255px] w-full h-[1px] bg-[#D7D7D7]"></div>
@@ -328,27 +334,36 @@ const Promotion: FC<IPromotion> = ({
           <h2 className="mb-40">Связаться</h2>
           {contacts?.results.map((tel) => (
             <a
+              key={tel.id}
               href={`tel:${tel.value}`}
               className="btn my-10 flex justify-center gap-[8px] items-center w-[520px]"
             >
               <img src={telIcon} alt="tel" />
-              <span>{tel.title}</span>
+              <span>+996 {tel.title}</span>
             </a>
           ))}
-          {/* <div className="flex gap-[16px] justify-center items-center">
-            <a href="">
-              <img src={instagramIcon} alt="instagram" />
-            </a>
-            <a href="">
-              <img src={facebookIcon} alt="facebook" />
-            </a>
-            <a href="">
-              <img src={whatsappIcon} alt="whatsapp" />
-            </a>
-            <a href="">
-              <img src={websiteIcon} alt="web-site" />
-            </a>
-          </div> */}
+          <div className="flex gap-[16px] justify-center items-center">
+            {companyData?.instagram && (
+              <a href={companyData.instagram} target="_blank">
+                <img src={instagramIcon} alt="instagram" />
+              </a>
+            )}
+            {companyData?.facebook && (
+              <a href={companyData.facebook} target="_blank">
+                <img src={facebookIcon} alt="facebook" />
+              </a>
+            )}
+            {companyData?.whatsapp && (
+              <a href={companyData.whatsapp} target="_blank">
+                <img src={whatsappIcon} alt="whatsapp" />
+              </a>
+            )}
+            {companyData?.website && (
+              <a href={companyData.website} target="_blank">
+                <img src={websiteIcon} alt="website" />
+              </a>
+            )}
+          </div>
         </Modal>
       </div>
       <h2 className="mt-80 mb-[32px]">Описание</h2>

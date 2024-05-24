@@ -18,6 +18,10 @@ import {
 import Schedule from "../../components/promotionPublicationPage/schedule/Schedule";
 import { useNavigate } from "react-router-dom";
 import { useClearCategory } from "../../hooks/useClearCategory";
+import instagramIcon from "../../assets/images/icons/instagram.svg";
+import facebookIcon from "../../assets/images/icons/facebook.svg";
+import whatsappIcon from "../../assets/images/icons/whatsapp.svg";
+import websiteIcon from "../../assets/images/icons/website.svg";
 
 const AddCompanyPage: FC = () => {
   const {
@@ -181,7 +185,7 @@ const AddCompanyPage: FC = () => {
             </div>
           </div>
           <div>
-            <h3 className="mb-[8px] title-3">Скидки акций в процентах</h3>
+            <h3 className="mb-[8px] title-3">Максимальный процент скидки</h3>
             <Input
               type="number"
               placeholder="Введите проценты"
@@ -191,27 +195,36 @@ const AddCompanyPage: FC = () => {
               })}
             />
           </div>
-          <Contacts contacts={contacts} setContacts={setContacts} />
+          <h3 className="mb-[8px] title-3">Контакты</h3>
           <Input
-            placeholder="Ссылка на instagram"
             className="!mt-0"
+            icon={instagramIcon}
+            placeholder="Ссылка на instagram"
+            inputClassName="pl-[64px]"
             {...register("instagram")}
           />
           <Input
-            placeholder="Ссылка на facebook"
+            icon={facebookIcon}
             className="!mt-[16px]"
+            placeholder="Ссылка на facebook"
+            inputClassName="pl-[64px]"
             {...register("facebook")}
           />
           <Input
-            placeholder="Ссылка на whatsapp"
+            icon={whatsappIcon}
             className="!mt-[16px]"
+            placeholder="Ссылка на whatsapp"
+            inputClassName="pl-[64px]"
             {...register("whatsapp")}
           />
           <Input
-            placeholder="Ссылка на website"
+            icon={websiteIcon}
             className="!mt-[16px]"
+            placeholder="Ссылка на website"
+            inputClassName="pl-[64px]"
             {...register("website")}
           />
+          <Contacts contacts={contacts} setContacts={setContacts} />
           <button
             onClick={() => setContacts((prev) => [...prev, ""])}
             className=" ml-[16px] block text-green font-bold"

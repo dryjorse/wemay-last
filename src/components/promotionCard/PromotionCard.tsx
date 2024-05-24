@@ -123,9 +123,9 @@ const PromotionCard: FC<IPromotionCardProps> = ({
       </h3>
       <div className="flex gap-[8px] items-center text-[20px] leading-[24px] stb:text-18">
         {old_price && (
-          <span className="relative font-medium text-[#828282]">
+          <span className="relative font-medium text-[rgba(130,130,130,1)]">
             от {old_price} сом{" "}
-            <div className="absolute top-[calc(50%)] left-0 right-0 h-[1px] bg-[#828282]"></div>
+            <div className="absolute top-[calc(50%)] left-0 right-0 h-[1px] bg-[rgba(130,130,130,1)]"></div>
           </span>
         )}
         <b>от {new_price} сом</b>
