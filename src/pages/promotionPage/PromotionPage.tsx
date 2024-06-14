@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { textLimit } from "../../data/data";
 import Promotion from "../../components/promotionPage/promotion/Promotion";
 import Reviews from "../../components/promotionPage/reviews/Reviews";
@@ -7,9 +7,14 @@ import PopularPromotions from "../../components/promotionPage/popularPromotions/
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import { useClearCategory } from "../../hooks/useClearCategory";
+import { useTopScroll } from "../../hooks/useTopScroll";
+import { useAppDispatch } from "../../store/store";
+import { setCategories } from "../../store/slices/filterSlice";
 
 const PromotionPage: FC = () => {
   useClearCategory();
+  useTopScroll();
+  const dispatch = useAppDispatch();
   const { id } = useParams();
   const { data: promotion } = useQuery({
     queryKey: ["promotions", id],
@@ -22,10 +27,19 @@ const PromotionPage: FC = () => {
   return (
     <>
       <div className="container-two pt-[52px] flex gap-[12px] items-center text-[14px]">
-        <span>Главная</span>{" "}
+        <Link to="/" className="hover:text-green trans-def">
+          Главная
+        </Link>{" "}
         {promotion.category_name && (
           <>
-            <span>{">"}</span> <span>{promotion.category_name}</span>
+            <span>{">"}</span>{" "}
+            <Link
+              to="/promotions"
+              className="hover:text-green trans-def"
+              onClick={() => dispatch(setCategories([promotion.category_name]))}
+            >
+              {promotion.category_name}
+            </Link>
           </>
         )}
         <span>{">"}</span> <span>{textLimit(promotion?.title, 21)}</span>

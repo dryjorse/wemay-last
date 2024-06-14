@@ -2,6 +2,7 @@ import Password from "../components/profilePage/password/Password";
 import Profile from "../components/profilePage/profile/Profile";
 import AboutPage from "../pages/aboutPage/AboutPage";
 import AddCompanyPage from "../pages/addCompanePage/AddCompanyPage";
+import CompaniesPage from "../pages/companiesPage/CompaniesPage";
 import CompanyPage from "../pages/companyPage/CompanyPage";
 import EndSoonPage from "../pages/endSoonPage/EndSoonPage";
 import ErrorPage from "../pages/errorPage/ErrorPage";
@@ -26,6 +27,7 @@ export const routes = [
   { path: "/promotions", element: <PromotionsPage /> },
   { path: "/promotion/:id", element: <PromotionPage /> },
   { path: "/about", element: <AboutPage /> },
+  { path: "/companies", element: <CompaniesPage /> },
   { path: "/company/:id", element: <CompanyPage /> },
   { path: "/profile/*", element: <ProfilePage /> },
   { path: "/favourites/", element: <FavouritesPage /> },

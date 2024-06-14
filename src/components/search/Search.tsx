@@ -59,11 +59,11 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
       </div>
       <div
         className={clsx(
-          "absolute left-[-16px] top-[-20px] rounded-[24px] px-[16px] pt-[95px] pb-[32px] w-[calc(100%+34px)] h-[287px] bg-[rgba(243,243,243,1)] z-[-1] opacity-0 pointer-events-none trans-def",
+          "absolute left-[-16px] top-[-20px] rounded-[24px] px-[16px] pt-[93px] pb-[32px] w-[calc(100%+34px)] h-[287px] bg-[rgba(243,243,243,1)] z-[-1] opacity-0 pointer-events-none trans-def",
           { "opacity-100 pointer-events-auto": isSearchFocus }
         )}
       >
-        <div className="overflow-y-scroll h-full [&>:not(:last-child)]:mb-[32px]">
+        <div className="overflow-hidden h-full [&>:not(:last-child)]:mb-[24px]">
           {isLoading ? (
             <Loading />
           ) : (

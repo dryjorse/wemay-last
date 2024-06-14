@@ -55,6 +55,7 @@ const Promotion: FC<IPromotion> = ({
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const [isContactsOpen, setIsContactsOpen] = useState(false);
+  const [viewImage, setViewImage] = useState("");
   const [restTime, setRestTime] = useState("");
   const [currentImage, setCurrentImage] = useState("");
   const { data: profile } = useProfile();
@@ -190,8 +191,9 @@ const Promotion: FC<IPromotion> = ({
       <div className="mt-[32px] flex justify-between gap-[32px] items-start blt:flex-col blt:items-stretch">
         <div className="flex-[0_0_740px] blt:flex-auto">
           <div
+            onClick={() => setViewImage(currentImage)}
             style={{ backgroundImage: `url(${currentImage})` }}
-            className="rounded-[24px] w-full h-[454px] flex items-end justify-between bg-cover bg-center bg-no-repeat text-white overflow-hidden trans-def stb:h-[200px]"
+            className="rounded-[24px] w-full h-[454px] flex items-end justify-between bg-cover bg-center bg-no-repeat text-white overflow-hidden trans-def cursor-pointer stb:h-[200px]"
           >
             {old_price ? (
               <b className="rounded-[0_16px_0_16px] p-[12px] bg-[linear-gradient(90deg,#2F80ED_0%,rgba(47,128,237,0)_100%)] text-[24px] leading-[24px]">
@@ -263,7 +265,7 @@ const Promotion: FC<IPromotion> = ({
           )}
           <div
             className={clsx(
-              "flex justify-between items-center gap-[8px] blt:justify-start",
+              "mb-[24px] flex justify-between items-center gap-[8px] blt:justify-start",
               { "mt-[24px]": !old_price }
             )}
           >
@@ -283,12 +285,11 @@ const Promotion: FC<IPromotion> = ({
                   localLikes.includes(profile?.id!) ? likedIcon : likeGreenIcon
                 }
                 alt="like-green"
-                className="mb-[2px]"
+                className="mb-[2px] block min-w-[18px] h-[16px]"
               />
               <span>{localLikes?.length || 0}</span>
             </button>
           </div>
-          <span className="my-[24px] block text-18">Контактная информация</span>
           <span className="text-grey">Телефон</span>
           {contacts?.results.map((tel) => (
             <a
@@ -394,6 +395,31 @@ const Promotion: FC<IPromotion> = ({
           </MapContainer>
         </>
       )}
+      <Modal
+        modalStyle="z-[100]"
+        isOpen={!!viewImage}
+        contentStyle="bg-transparent relative"
+        close={() => setViewImage("")}
+      >
+        <button
+          onClick={() => setViewImage("")}
+          className="absolute top-0 right-0 p-[5px] bg-green rounded-[0_0_0_12px]"
+        >
+          <div
+            className="w-[24px] h-[24px] bg-white"
+            style={{
+              maskImage: `url(${crossIcon})`,
+              maskPosition: "center",
+              maskRepeat: "no-repeat",
+            }}
+          ></div>
+        </button>
+        <img
+          src={viewImage}
+          alt="view-image"
+          className="max-w-[80vw] max-h-[80vh]"
+        />
+      </Modal>
     </section>
   );
 };

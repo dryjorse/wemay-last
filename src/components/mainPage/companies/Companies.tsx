@@ -3,17 +3,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import arrowLeftIcon from "../../../assets/images/icons/arrow-left.svg";
 import { Navigation } from "swiper/modules";
 import CompanyCard from "../../companyCard/CompanyCard";
-import "swiper/css";
-import { useQuery } from "@tanstack/react-query";
-import companiesService from "../../../services/companiesService";
 import Loading from "../../ui/loading/Loading";
+import { Link } from "react-router-dom";
+import { useCompanies } from "../../../hooks/useCompanies";
+import "swiper/css";
 
 const Companies: FC = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["companies"],
-    queryFn: () => companiesService.getAll(),
-    select: ({ data }) => data,
-  });
+  const { data, isLoading } = useCompanies();
 
   return (
     <section className="pt-60">
@@ -58,7 +54,12 @@ const Companies: FC = () => {
           />
         </button>
       </div>
-      {/* <button className="block mx-auto text-[#2F80ED]">Показать ещё</button> */}
+      <Link
+        to="/companies"
+        className="block mx-auto text-center text-[#2F80ED]"
+      >
+        Показать ещё
+      </Link>
     </section>
   );
 };

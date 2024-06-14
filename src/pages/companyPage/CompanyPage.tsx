@@ -5,9 +5,11 @@ import { useParams } from "react-router-dom";
 import companiesService from "../../services/companiesService";
 import Loading from "../../components/ui/loading/Loading";
 import { useClearCategory } from "../../hooks/useClearCategory";
+import { useTopScroll } from "../../hooks/useTopScroll";
 
 const CompanyPage: FC = () => {
   const { id } = useParams();
+  useTopScroll()
   useClearCategory();
 
   const { data, isLoading } = useQuery({

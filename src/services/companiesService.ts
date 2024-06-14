@@ -23,7 +23,9 @@ interface IAddWorkScheduleBody extends IWorkSchedule {
 
 class CompaniesService {
   getAll() {
-    return $api<IResults<ICompany>>("companies/all/");
+    return $api<IResults<ICompany>>("companies/all/", {
+      params: { limit: 10 },
+    });
   }
   getContacts(companyId: number) {
     return $api<IResults<IContact>>(`companies/${companyId}/contact/all/`);
