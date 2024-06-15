@@ -19,18 +19,12 @@ const Footer: FC = () => {
           <div>
             <h3 className="text-[20px] font-bold">О сервисе</h3>
             <ul className="text-[18px] font-medium *:mt-[24px]">
-              <li>Контакты</li>
-              <li>Как купить</li>
-              <li>Реквизиты</li>
+            
             </ul>
           </div>
           <div>
-            <h3 className="text-[20px] font-bold">Оплата и доставка</h3>
-            <ul className="text-[18px] font-medium *:mt-[24px]">
-              <li>Оплата</li>
-              <li>Доставка</li>
-              <li>Покупка в кредит</li>
-            </ul>
+            <h3 className="text-[20px] font-bold">Новости и Блог</h3>
+          
           </div>
           <div>
             <h3 className="text-[20px] font-bold">Мы в соцсетях</h3>

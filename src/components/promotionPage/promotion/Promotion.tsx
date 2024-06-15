@@ -67,6 +67,11 @@ const Promotion: FC<IPromotion> = ({
     enabled: !!address,
   });
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleAccordion = () => {
+    setIsOpen(!isOpen);
+  };
   const { data: companyData } = useQuery({
     queryKey: ["company", company],
     queryFn: () => companiesService.getById(company),
@@ -78,6 +83,7 @@ const Promotion: FC<IPromotion> = ({
     queryFn: () => companiesService.getContacts(company),
     select: ({ data }) => data,
   });
+console.log(contacts);
 
   const [localLikes, setLocalLikes] = useState(likes);
 
@@ -138,7 +144,7 @@ const Promotion: FC<IPromotion> = ({
       prev.includes(profile?.id!)
         ? prev.filter((id) => id !== profile?.id)
         : [...prev, profile?.id!]
-    );
+    );3
   };
 
   const addressCoordinates = marker?.[0]
@@ -235,13 +241,7 @@ const Promotion: FC<IPromotion> = ({
               ))}
             </Swiper>
             <div></div>
-            <div className="font-mulish">
-              <div className="flex gap-[6px] items-center text-14 leading-[19px] text-[#4F4F4F]">
-                <img src={timeIcon} alt="clock" />
-                <span>До конца акции</span>
-              </div>
-              <span className="text-grey">{restTime}</span>
-            </div>
+        
           </div>
         </div>
         <div className="rounded-[24px] p-[32px] bg-gray flex-[0_1_508px] font-mulish">
@@ -287,21 +287,17 @@ const Promotion: FC<IPromotion> = ({
                 alt="like-green"
                 className="mb-[2px] block min-w-[18px] h-[16px]"
               />
-              <span>{localLikes?.length || 0}</span>
+              <span className="">{localLikes?.length || 0}</span>
             </button>
           </div>
-          <span className="text-grey">Телефон</span>
-          {contacts?.results.map((tel) => (
-            <a
-              key={tel.id}
-              href={`tel:${tel.value}`}
-              className="mt-[8px] block text-18 font-bold leading-[23px] font-montserrat"
-            >
-              +996 {tel.title}
-            </a>
-          ))}
+      
+        
           <div className="my-[21px] max-w-[255px] w-full h-[1px] bg-[#D7D7D7]"></div>
-          <span className="text-grey">Часы работы</span>
+         <span className="text-grey cursor-pointer" onClick={toggleAccordion}>
+        Часы работы
+      </span>
+      {isOpen && (
+        <div>
           {workSchedule &&
             Object.keys(workSchedule).map(
               (key) =>
@@ -320,19 +316,33 @@ const Promotion: FC<IPromotion> = ({
                 )
             )}
         </div>
+        
+      )}
+          <div className="font-mulish flex justify-center items-end flex-col">
+              <div className="flex gap-[6px] items-center text-14 leading-[19px] text-[#4F4F4F]">
+                <img src={timeIcon} alt="clock" />
+                <span>До конца акции</span>
+              </div>
+              <span className="text-grey mr-[20px]">{restTime}</span>
+            </div>
+        </div>
         <Modal
           isOpen={isContactsOpen}
           close={() => setIsContactsOpen(false)}
           modalStyle="z-[60]"
           contentStyle="pt-20 px-40 pb-[32px] relative text-[20px] leading-[24px]"
         >
-          <button
+          <div className="flex flex-row justify-between items-center mb-20">
+            
+          <h2 >Связаться</h2>
+            <button
             onClick={() => setIsContactsOpen(false)}
-            className="absolute top-[-56px] right-0 p-[16px]"
+          className="pl-[20px]"
           >
             <img src={crossIcon} alt="cross" />
           </button>
-          <h2 className="mb-40">Связаться</h2>
+          </div>
+        
           {contacts?.results.map((tel) => (
             <a
               key={tel.id}
@@ -340,27 +350,27 @@ const Promotion: FC<IPromotion> = ({
               className="btn my-10 flex justify-center gap-[8px] items-center w-[520px]"
             >
               <img src={telIcon} alt="tel" />
-              <span>+996 {tel.title}</span>
+              <span> {tel.title}</span>
             </a>
           ))}
           <div className="flex gap-[16px] justify-center items-center">
             {companyData?.instagram && (
-              <a href={companyData.instagram} target="_blank">
+              <a href={companyData.instagram} target="_blank" className="h-[40px] w-[40px]">
                 <img src={instagramIcon} alt="instagram" />
               </a>
             )}
             {companyData?.facebook && (
-              <a href={companyData.facebook} target="_blank">
+              <a href={companyData.facebook} target="_blank" className="h-[40px] w-[40px]">
                 <img src={facebookIcon} alt="facebook" />
               </a>
             )}
             {companyData?.whatsapp && (
-              <a href={companyData.whatsapp} target="_blank">
+              <a href={companyData.whatsapp} target="_blank" className="h-[40px] w-[40px]">
                 <img src={whatsappIcon} alt="whatsapp" />
               </a>
             )}
             {companyData?.website && (
-              <a href={companyData.website} target="_blank">
+              <a href={companyData.website} target="_blank" className="h-[40px] w-[40px]">
                 <img src={websiteIcon} alt="website" />
               </a>
             )}

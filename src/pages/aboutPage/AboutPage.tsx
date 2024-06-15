@@ -19,16 +19,15 @@ const AboutPage: FC = () => {
         <h1 className="title text-white z-10">О нас</h1>
       </div>
       <div className="container pt-60 pb-[140px] max-w-[950px] text-[rgba(51,51,51,1)] text-18">
-        <h2>Наш сервис самый лучший</h2>
+        <h2>Твой пропуск в мир скидок до 90%</h2>
         <p className="my-[32px] leading-[23px]">
-          Значимость этих проблем настолько очевидна, что сложившаяся структура
-          организации требуют от нас анализа дальнейших направлений развития. С
-          другой стороны рамки и место обучения кадров позволяет выполнять
-          важные задания по разработке новых предложений.
+        От одежды и услуг, до развлечений. Абсолютно все категории.
+Наш сервис - счастье для всех. Цена теперь не преграда.
+Сделайте свою жизнь ярче и интереснее!
         </p>
         <h2 className="mb-[32px] text-[24px]">Контакты</h2>
-        <a href="mailto:sampletext@gmail.com">sampletext@gmail.com</a>
-        <h2 className="mt-[32px] mb-[24px] text-[24px]">Соцсети</h2>
+        <a href="mailto:sampletext@gmail.com">Yes@wemay.kg</a>
+        <h2 className="mt-[32px] mb-[24px] text-[24px]">+996(222)22-33-66</h2>
         <div className="flex gap-[16px]">
           <a href="">
             <img src={instagramIcon} alt="instagram" />

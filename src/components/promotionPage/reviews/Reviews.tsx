@@ -77,10 +77,11 @@ const Reviews: FC<Props> = ({ promotionId }) => {
           )}
           <div className="pt-[16px] px-[16px] pb-[24px] rounded-[16px] bg-white">
             <h3 className="text-18 font-bold">Добавить комментарий</h3>
-            <div className="my-[16px] border border-[#DDDDDF] rounded-[24px] py-[16px] px-[24px] h-[120px]">
+            <div className="my-[16px] border border-[#DDDDDF] rounded-[24px] py-[16px] px-[24px] h-[60px]">
               <textarea
                 placeholder="Ваш комментарий..."
-                className="outline-none w-full h-full"
+                className="outline-none w-full h-full resize-none" 
+
                 {...register("body", { required: true })}
               ></textarea>
             </div>
