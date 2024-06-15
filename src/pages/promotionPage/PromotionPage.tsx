@@ -44,6 +44,7 @@ const PromotionPage: FC = () => {
         )}
         <span>{">"}</span> <span>{textLimit(promotion?.title, 21)}</span>
       </div>
+    
       <Promotion {...promotion} />
       <Reviews promotionId={+(id || 0)} />
       <PopularPromotions promotionId={+(id || 0)} />
