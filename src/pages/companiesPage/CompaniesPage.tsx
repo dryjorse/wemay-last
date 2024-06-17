@@ -5,7 +5,7 @@ import { useTopScroll } from "../../hooks/useTopScroll";
 
 const CompaniesPage: FC = () => {
   useTopScroll();
-  const { data, isLoading } = useCompanies();
+  const { data } = useCompanies();
 
   return (
     <div className="container py-60 min-h-[calc(100vh-279px)]">

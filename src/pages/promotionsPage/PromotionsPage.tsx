@@ -6,6 +6,7 @@ import { useCompanies } from "../../hooks/useCompanies";
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import { useSelector } from "react-redux";
+import { RootState } from "@reduxjs/toolkit/query";
 const PromotionsPage: FC = () => {
   // Using custom hook for companies
   const { data: companiesData, isLoading: isLoadingCompanies } = useCompanies();
