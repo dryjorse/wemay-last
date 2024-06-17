@@ -1,18 +1,16 @@
-import React, { FC, useState } from "react";
+import  { FC, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import arrowLeftIcon from "../../../assets/images/icons/arrow-left.svg";
 import { Navigation } from "swiper/modules";
-import CompanyCard from "../../companyCard/CompanyCard";
+import  CompanyCard  from "../../companyCard/CompanyCard";
 import Loading from "../../ui/loading/Loading";
-import { Link } from "react-router-dom";
 import "swiper/css";
 
 interface Company {
   id: number;
   name: string;
   logo: string;
-  category: string; // Assuming there is a category field in the company data
-  // Add more fields as per your actual data structure
+  category: string;
 }
 
 interface CompaniesProps {
@@ -60,7 +58,7 @@ const Companies: FC<CompaniesProps> = ({ data = [], isLoading }) => {
         >
           {filteredCompanies.map((company) => (
             <SwiperSlide key={company.id} className="w-fit">
-              <CompanyCard {...company} />
+              < CompanyCard {...company} />
             </SwiperSlide>
           ))}
         </Swiper>

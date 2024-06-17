@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import  { FC } from "react";
 import Promotions from "../../components/promotions/Promotions";
 import Slider from "../../components/promotionPage/sliderPromotion/Slider";
 import Companies from "../../components/promotionPage/companiesPromotion/Companies";
