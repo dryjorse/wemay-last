@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
   KeyboardEvent,
-  MouseEvent,
 } from "react";
 import clsx from "clsx";
 import searchIcon from "../../assets/images/icons/search.svg";
@@ -15,7 +14,6 @@ import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import Loading from "../ui/loading/Loading";
-import { debounce } from "@mui/material";
 
 interface Props {
   isSearchFocus: boolean;
