@@ -35,11 +35,10 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
 
   const handleSearch = useCallback(() => {
     refetch().then(({ data }) => {
-      const results = data?.results;
-      if (results?.length === 0) {
+      if (!data?.results?.length) {
         navigate("/not-found");
-        setSearch(""); // Clear search input
-        setIsSearchFocus(false); // Close search dropdown
+        setSearch("");
+        setIsSearchFocus(false);
       }
     });
   }, [refetch, navigate, setIsSearchFocus]);
@@ -50,15 +49,12 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
     }
   };
 
-  const onChangeSearch = (value: string) => {
-    setSearch(value);
+  const handleClickSuggestion = (promotionId: number) => {
+    navigate(`/promotion/${promotionId}`);
+    setSearch("");
+    setIsSearchFocus(false);
   };
 
-  const handleClickSuggestion = (promotionId: string) => {
-    navigate(`/promotion/${promotionId}`);
-    setSearch(""); // Clear search input
-    setIsSearchFocus(false); // Close search dropdown
-  };
 
   return (
     <div ref={searchRef} className="relative flex-[0_1_578px] z-[30]">
@@ -70,7 +66,7 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
           placeholder={isSearchFocus ? "" : "Поиск акций"}
           onFocus={() => setIsSearchFocus(true)}
           className="w-full leading-[20px] placeholder:text-black"
-          onChange={({ target: { value } }) => onChangeSearch(value)}
+          onChange={({ target: { value } }) => setSearch(value)}
           onKeyPress={handleKeyPress}
         />
         <button
@@ -86,17 +82,14 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
           { "opacity-100 pointer-events-auto": isSearchFocus }
         )}
       >
-        <div className="overflow-hidden flex justify-start p-[30px] text-[16px]  font-bold items-start h-full [&>:not(:last-child)]:mb-[24px]">
+        <div className="overflow-hidden flex justify-start p-[30px] text-[16px] font-bold items-start h-full [&>:not(:last-child)]:mb-[24px]">
           {isLoading ? (
             <Loading />
           ) : (
             data?.results?.map((promotion) => (
               <Link
-                key={promotion.title}
-                onClick={() => {
-                  handleClickSuggestion(promotion.id);
-                  setIsSearchFocus(false);
-                }}
+                key={promotion.id}
+                onClick={() => handleClickSuggestion(promotion.id)}
                 to={`/promotion/${promotion.id}`}
                 className="block hover:text-green"
               >

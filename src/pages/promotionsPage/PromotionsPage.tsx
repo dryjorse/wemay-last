@@ -6,7 +6,8 @@ import { useCompanies } from "../../hooks/useCompanies";
 import { useQuery } from "@tanstack/react-query";
 import promotionService from "../../services/promotionService";
 import { useSelector } from "react-redux";
-import { RootState } from "@reduxjs/toolkit/query";
+import { RootState } from "../../store/store";
+
 const PromotionsPage: FC = () => {
   // Using custom hook for companies
   const { data: companiesData, isLoading: isLoadingCompanies } = useCompanies();
@@ -23,7 +24,7 @@ console.log(categories);
 
   return (
     <div>
-      <Slider data={promotionsData?.results} isLoading={isLoadingPromotions} />
+        <Slider data={promotionsData?.results || []} isLoading={isLoadingPromotions} />
       <Companies data={companiesData?.results} isLoading={isLoadingCompanies} />
       <Promotions isPagination={true} />
     </div>

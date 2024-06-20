@@ -7,7 +7,9 @@ const CompanyCard: FC<ICompanyCard> = ({
   image,
   promotions_count,
   discounts,
+ 
 }) => {
+  
   return (
     <Link
       to={`/company/${id}`}

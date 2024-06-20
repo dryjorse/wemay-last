@@ -5,21 +5,18 @@ import { Navigation } from "swiper/modules";
 import  CompanyCard  from "../../companyCard/CompanyCard";
 import Loading from "../../ui/loading/Loading";
 import "swiper/css";
+import { ICompany } from "../../../types/types";
 
-interface Company {
-  id: number;
-  name: string;
-  logo: string;
-  category: string;
-}
 
 interface CompaniesProps {
-  data?: Company[];
+  data?: ICompany[];
   isLoading: boolean;
 }
 
+
 const Companies: FC<CompaniesProps> = ({ data = [], isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+console.log(data);
 
   // Function to filter companies based on selected category
   const filteredCompanies = selectedCategory
