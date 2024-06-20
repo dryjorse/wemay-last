@@ -57,21 +57,21 @@ const Search: FC<Props> = ({ isSearchFocus, setIsSearchFocus }) => {
 
 
   return (
-    <div ref={searchRef} className="relative flex-[0_1_578px] z-[30]">
-      <div className="box-secondary flex items-center gap-[8px]">
+    <div ref={searchRef} className="relative flex-[0_1_578px] z-[30] ">
+      <div className="box-secondary flex items-center gap-[5px]">
         <img src={searchIcon} alt="search" />
         <input
           type="text"
           value={search}
           placeholder={isSearchFocus ? "" : "Поиск акций"}
           onFocus={() => setIsSearchFocus(true)}
-          className="w-full leading-[20px] placeholder:text-black"
+          className="w-full leading-[10px] placeholder:text-black max-h-[20px]"
           onChange={({ target: { value } }) => setSearch(value)}
           onKeyPress={handleKeyPress}
         />
         <button
           onClick={handleSearch}
-          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded"
+          className="ml-2 px-2   py-1 bg-blue-500 text-black rounded"
         >
           Искать
         </button>

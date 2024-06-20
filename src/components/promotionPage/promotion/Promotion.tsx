@@ -67,6 +67,7 @@ const Promotion: FC<IPromotion> = ({
     enabled: !!address,
   });
 
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleAccordion = () => {
@@ -146,11 +147,15 @@ console.log(contacts);
         : [...prev, profile?.id!]
     );3
   };
-
   const addressCoordinates = marker?.[0]
     ? [marker[0]?.lat, marker[0].lon]
     : null;
 
+
+
+    console.log(addressCoordinates);
+    
+    
   const workSchedule: any = company_work_schedule
     ? Object.keys(company_work_schedule).reduce((prev, day) => {
         const currDay = day.split("_")[0];
@@ -379,7 +384,7 @@ console.log(contacts);
       </div>
       <h2 className="mt-80 mb-[32px]">Описание</h2>
       <p>{description}</p>
-      {marker?.[0] && (
+      {address?.[0] && (
         <>
           <h2 className="mt-80 mb-[32px]">Адреса</h2>
           <span className="text-[18px] leading-[23px]">Адрес</span>
