@@ -60,12 +60,19 @@ const Promotion: FC<IPromotion> = ({
   const [currentImage, setCurrentImage] = useState("");
   const { data: profile } = useProfile();
 
-  const { data: marker } = useQuery({
-    queryKey: ["marker", id],
-    queryFn: () => mapService.getByName(address),
+  const { data: promotionData } = useQuery({
+    queryKey: ["promotion", id],
+    queryFn: () => promotionService.getById(id),
     select: ({ data }) => data,
-    enabled: !!address,
   });
+
+  const { data: marker } = useQuery({
+    queryKey: ["marker", promotionData?.address],
+    queryFn: () => mapService.getByName(promotionData?.address || ""),
+    select: ({ data }) => data,
+    enabled: !!promotionData?.address,
+  });
+
 
 
   const [isOpen, setIsOpen] = useState(false);
@@ -153,7 +160,6 @@ console.log(contacts);
 
 
 
-    console.log(addressCoordinates);
     
     
   const workSchedule: any = company_work_schedule
@@ -384,7 +390,7 @@ console.log(contacts);
       </div>
       <h2 className="mt-80 mb-[32px]">Описание</h2>
       <p>{description}</p>
-      {address?.[0] && (
+      {address  && (
         <>
           <h2 className="mt-80 mb-[32px]">Адреса</h2>
           <span className="text-[18px] leading-[23px]">Адрес</span>

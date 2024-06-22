@@ -9,26 +9,18 @@ const Footer: FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="pt-60 pb-[24px] bg-gray">
+    <footer className=" bg-gray">
       <div className="container">
-        <h2 className="mb-[16px] text-primary font-extrabold">wemay</h2>
-        <span className="text-14 font-medium leading-[16px]">
-          Сервис выгодных предложений
-        </span>
+        <div className="flex justify-between items-center">
+            <div className="flex flex-col items-start">  
+               <h2 className="mb-[16px] text-primary font-extrabold">wemay</h2>
+               <span className="text-14 font-medium leading-[16px]">           Сервис выгодных предложений </span>
+        </div>
+     
+
+      
         <div className="mt-60 mb-[75px] max-w-[965px] flex justify-between leading-[24px] tb:mb-[126px] tb:flex-col tb:gap-[80px]">
-          <div>
-            <h3 className="text-[20px] font-bold">О сервисе</h3>
-            <ul className="text-[18px] font-medium *:mt-[24px]">
-            
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-[20px] font-bold">Новости и Блог</h3>
-          
-          </div>
-          <div>
-            <h3 className="text-[20px] font-bold">Мы в соцсетях</h3>
-            <ul className="mt-[24px] flex gap-[16px]">
+         <ul className="mt-[24px] flex gap-[16px]">
               <li>
                 <a href="">
                   <img src={instagramIcon} alt="instagram" />
@@ -55,8 +47,9 @@ const Footer: FC = () => {
                 </a>
               </li>
             </ul>
-          </div>
         </div>
+        </div>
+      
         <p className="text-center font-medium text-[#4F4F4F]">
           &copy; wemay {currentYear}
         </p>
