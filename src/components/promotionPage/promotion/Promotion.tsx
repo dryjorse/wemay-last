@@ -390,7 +390,7 @@ console.log(contacts);
       </div>
       <h2 className="mt-80 mb-[32px]">Описание</h2>
       <p>{description}</p>
-      {address  && (
+      {address[0]  && (
         <>
           <h2 className="mt-80 mb-[32px]">Адреса</h2>
           <span className="text-[18px] leading-[23px]">Адрес</span>
