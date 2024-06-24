@@ -77,6 +77,8 @@ export interface IPromotion {
   address: string;
   company: number;
   category_name: string;
+  company_name: string;
+  data:[],
 }
 
 export type PromotionType = "Скидка" | "Бонус" | "Сертификат" | "Розыгрыш";

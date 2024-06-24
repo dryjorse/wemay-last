@@ -15,7 +15,7 @@ import promotionService from "../../services/promotionService";
 import Loading from "../ui/loading/Loading";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-
+import { IPromotion } from "../../types/types";
 const typesSlug: { [key: string]: string } = {
   Скидка: "Discount",
   Бонус: "Bonus",
@@ -29,6 +29,8 @@ interface IPromotions {
   style?: string;
   companyName?: string;
   promotionsType?: "daily" | "endSoon" | "free";
+  data?: IPromotion[] | undefined;
+ 
 }
 
 const Promotions: FC<IPromotions> = ({
@@ -37,6 +39,7 @@ const Promotions: FC<IPromotions> = ({
   style = "",
   companyName = "",
   promotionsType,
+  
 }) => {
   const { categories, promotionTypes, discountPercentage, sortValue } =
     useSelector((state: RootState) => state.filter);

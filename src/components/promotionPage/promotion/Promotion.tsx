@@ -50,6 +50,7 @@ const Promotion: FC<IPromotion> = ({
   description,
   address,
   company,
+  
 }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
